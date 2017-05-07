@@ -13,38 +13,41 @@ import java.util.Calendar;
  * 不常用的就不做定义了。。。
  */
 public final class Holiday {
+    private static final Normal[] solarHolidays = {
+            new Normal("元旦", 1, 1),
+            new Normal("情人节", 2, 14),
+            new Normal("妇女节", 3, 8),
+            new Normal("植树节", 3, 12),
+            new Normal("消费者权益日", 3, 15),
+            new Normal("愚人节", 4, 1),
+            new Normal("劳动节", 5, 1),
+            new Normal("青年节", 5, 4),
+            new Normal("儿童节", 6, 1),
+            new Normal("建党节", 7, 1),
+            new Normal("建军节", 8, 1),
+            new Normal("教师节", 9, 10),
+            new Normal("国庆节", 10, 1),
+            new Normal("平安夜", 12, 24),
+            new Normal("圣诞节", 12, 25),
+    };
 
-    // 公历节日定义
-    private static final String[] solarHolidays = {
-            "元旦", "情人节", "妇女节", "植树节", "消费者权益日", "愚人节",
-            "劳动节", "青年节", "儿童节", "建党节", "建军节", "教师节",
-            "国庆节", "平安夜", "圣诞节",
-    };
-    // 农历节日定义
-    private static final String[] lunarHolidays = {
-            "春节", "元宵节", "龙头节", "端午节", "七夕", "中元节",
-            "中秋节", "重阳节", "腊八节", "北方小年", "南方小年", "除夕",
-    };
-    private static final String[] weekHolidays = {
-            "母亲节", "父亲节", "感恩节",
+    private static final Normal[] lunarHolidays = {
+            new Normal("春节", 1, 1),
+            new Normal("元宵节", 1, 15),
+            new Normal("龙抬头", 2, 2),
+            new Normal("端午节", 5, 5),
+            new Normal("七夕", 7, 7),
+            new Normal("中元节", 7, 15),
+            new Normal("中秋节", 8, 15),
+            new Normal("重阳节", 9, 9),
+            new Normal("腊八节", 12, 8),
+            new Normal("小年", 12, 23),
     };
 
-    // 阳历节日日期定义，第一个字节为月份 + 1，第二个字节为日期
-    private static final byte[][] solarDate = {
-            {1, 1}, {2, 14}, {3, 8}, {3, 12}, {3, 15}, {4, 1},
-            {5, 1}, {5, 4}, {6, 1}, {7, 1}, {8, 1}, {9, 10},
-            {10, 1}, {12, 24}, {12, 25}
-    };
-    // 农历节日日期定义，第一个字节为农历月份，第二个为农历日期 除夕另外计算
-    private static final byte[][] lunarDate = {
-            {1, 1}, {1, 15}, {2, 2}, {5, 5}, {7, 7}, {7, 15},
-            {8, 15}, {9, 9}, {12, 8}, {12, 23}, {12, 24}
-    };
-    // 根据星期定义的节日日期，第一个字节为月份+1，第二个为第几周，
-    // 第三个为周几，Calendar中获取的数据
-    // 周日为1 母亲节 5月的第二个星期日
-    private static final byte[][] weekDate = {
-            {5, 2, 1}, {6, 3, 1}, {11, 4, 5}
+    private static final Weekly[] weekHolidays = {
+            new Weekly("母亲节", 5, 2, 1),
+            new Weekly("父亲节", 6, 3, 1),
+            new Weekly("感恩节", 11, 4, 5),
     };
 
     /**
@@ -57,9 +60,9 @@ public final class Holiday {
         int month = date.get(Calendar.MONTH) + 1;
         int day = date.get(Calendar.DAY_OF_MONTH);
 
-        for (int i = 0; i < solarDate.length; i++) {
-            if (solarDate[i][0] == month && solarDate[i][1] == day) {
-                return new SolarHoliday(solarHolidays[i]);
+        for (Normal holiday : solarHolidays) {
+            if (holiday.month == month && holiday.day == day) {
+                return new SolarHoliday(holiday.name);
             }
         }
 
@@ -80,9 +83,9 @@ public final class Holiday {
             return null;
         }
 
-        for (int i = 0; i < lunarDate.length; i++) {
-            if (lunarDate[i][0] == month && lunarDate[i][1] == day) {
-                return new LunarHoliday(lunarHolidays[i]);
+        for (Normal holiday : lunarHolidays) {
+            if (holiday.month == month && holiday.day == day) {
+                return new LunarHoliday(holiday.name);
             }
         }
 
@@ -90,7 +93,7 @@ public final class Holiday {
         if (month == 12) {
             if (day == LunarCalendar.daysInLunarMonth(date.get(LunarCalendar.LUNAR_YEAR), month)) {
                 // 12月的最后一天为除夕
-                return new LunarHoliday(lunarHolidays[lunarHolidays.length - 1]);
+                return new LunarHoliday("除夕");
             }
         }
 
@@ -105,14 +108,14 @@ public final class Holiday {
      */
     public static SolarHoliday getWeekHoliday(LunarCalendar date) {
         int month = date.get(Calendar.MONTH) + 1;
-        int week = date.get(Calendar.DAY_OF_WEEK);
+        int day = date.get(Calendar.DAY_OF_WEEK);
         //  不能用WEEK_IN_MONTH获取
-        int weekCount = date.get(Calendar.DAY_OF_WEEK_IN_MONTH);
+        int weeks = date.get(Calendar.DAY_OF_WEEK_IN_MONTH);
 
-        for (int i = 0; i < weekDate.length; i++) {
-            if (month == weekDate[i][0] && weekCount == weekDate[i][1]
-                    && week == weekDate[i][2]) {
-                return new SolarHoliday(weekHolidays[i]);
+        for (Weekly holiday : weekHolidays) {
+            if (month == holiday.month && weeks == holiday.weeks
+                    && day == holiday.day) {
+                return new SolarHoliday(holiday.name);
             }
         }
 
@@ -146,5 +149,31 @@ public final class Holiday {
 
         // 没有则返回空
         return tmpLst.isEmpty() ? null : tmpLst;
+    }
+
+    static class Normal {
+        String name;
+        int month; // 月份
+        int day; // 日期
+
+        public Normal(String name, int month, int day) {
+            this.name = name;
+            this.month = month;
+            this.day = day;
+        }
+    }
+
+    static class Weekly {
+        String name;
+        int month; // 月份
+        int weeks; // 第几周
+        int day; // 周几
+
+        public Weekly(String name, int month, int weeks, int day) {
+            this.name = name;
+            this.month = month;
+            this.weeks = weeks;
+            this.day = day;
+        }
     }
 }
