@@ -32,6 +32,7 @@ public class CalendarViewPagerListener implements ViewPager.OnPageChangeListener
 
     @Override
     public void onPageSelected(int position) {
+        mCurrIndex = position;
         measureDirection(position);
         updateCalendarView(position);
     }
@@ -98,7 +99,6 @@ public class CalendarViewPagerListener implements ViewPager.OnPageChangeListener
         } else if (index < mCurrIndex) {
             mDirection = SLIDE_LEFT;
         }
-        mCurrIndex = index;
     }
 
     /**

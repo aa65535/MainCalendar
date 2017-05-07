@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int ShiftsWorkRecordRequestCode = 2;
     // 系统设置页面的需求编号
     private static final int GlobalSettingRequestCode = 3;
+    private static final String ViewPagerIndex = "viewPagerIndex";
 
     // 当前布局方向 1:竖屏   2:横屏
     private int mOrientation;
@@ -102,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<ICalendarRecord> mCurMonthRecords;
     // 记录适配器
     private RecordAdapter mRecordAdapter;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         // 获取页面资源
-        setViewPager();
+        setViewPager(savedInstanceState);
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_DATE_CHANGED);
@@ -180,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 初始化页面控件
      */
-    private void setViewPager() {
+    private void setViewPager(Bundle savedInstanceState) {
         mRecordListTopMargin = (int) this.getResources().getDimension(R.dimen.schedule_top_margin);
 
         mTodayLayout = (LinearLayout) this.findViewById(R.id.today_button_parent);
@@ -216,14 +218,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
         }
 
-        ViewPager viewPager = (ViewPager) this.findViewById(R.id.viewpager);
+        mViewPager = (ViewPager) this.findViewById(R.id.viewpager);
         CalendarView[] views = CalendarViewBuilder.createMassCalendarViews(this, AppConstants.LOAD_CALENDAR_VIEW_COUNT, this);
         CalendarViewPagerAdapter viewPagerAdapter = new CalendarViewPagerAdapter(views);
         mListener = new CalendarViewPagerListener(viewPagerAdapter);
-        if (viewPager != null) {
-            viewPager.setAdapter(viewPagerAdapter);
-            viewPager.addOnPageChangeListener(mListener);
-            viewPager.setCurrentItem(CalendarViewPagerListener.DEFAULT_INDEX);
+        if (mViewPager != null) {
+            mViewPager.setAdapter(viewPagerAdapter);
+            mViewPager.addOnPageChangeListener(mListener);
+            if (savedInstanceState != null)
+                mViewPager.setCurrentItem(savedInstanceState.getInt(ViewPagerIndex, CalendarViewPagerListener.DEFAULT_INDEX));
+            else
+                mViewPager.setCurrentItem(CalendarViewPagerListener.DEFAULT_INDEX);
         }
 
         mContentPager = this.findViewById(R.id.contentPager);
@@ -246,6 +251,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(ViewPagerIndex, mViewPager.getCurrentItem());
     }
 
     @Override
