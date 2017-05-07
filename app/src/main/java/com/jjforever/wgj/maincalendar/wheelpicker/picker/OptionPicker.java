@@ -8,10 +8,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.jjforever.wgj.maincalendar.wheelpicker.widget.WheelView;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import com.jjforever.wgj.maincalendar.wheelpicker.widget.WheelView;
 
 /**
  * 单项选择器
@@ -83,7 +83,7 @@ public class OptionPicker extends WheelPicker {
         this.onOptionPickListener = listener;
     }
 
-    public void setOnOptionIndexPickListener(OnOptionIndexPickListener listener){
+    public void setOnOptionIndexPickListener(OnOptionIndexPickListener listener) {
         this.onOptionIndexPickListener = listener;
     }
 
@@ -132,7 +132,7 @@ public class OptionPicker extends WheelPicker {
         if (onOptionPickListener != null) {
             onOptionPickListener.onOptionPicked(selectedOption);
         }
-        if (onOptionIndexPickListener != null){
+        if (onOptionIndexPickListener != null) {
             onOptionIndexPickListener.onOptionPicked(mSelectedIndex);
         }
     }
@@ -160,7 +160,7 @@ public class OptionPicker extends WheelPicker {
 
     }
 
-    public interface OnOptionIndexPickListener{
+    public interface OnOptionIndexPickListener {
 
         void onOptionPicked(int index);
     }

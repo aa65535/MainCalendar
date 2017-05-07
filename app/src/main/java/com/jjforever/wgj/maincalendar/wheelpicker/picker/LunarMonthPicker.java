@@ -70,7 +70,7 @@ public class LunarMonthPicker extends WheelPicker {
         layout.addView(dayView);
 
         ArrayList<String> months = new ArrayList<>();
-        for (int i = 1; i < LunarCalendar.lunarMonthNames.length; i++){
+        for (int i = 1; i < LunarCalendar.lunarMonthNames.length; i++) {
             months.add(LunarCalendar.lunarMonthNames[i]);
         }
         monthView.setItems(months, selectedMonth);
@@ -104,8 +104,9 @@ public class LunarMonthPicker extends WheelPicker {
     public interface OnLunarMonthPickListener {
         /**
          * 选中农历月日触发事件
+         *
          * @param month 农历月
-         * @param day 农历日
+         * @param day   农历日
          */
         void onLunarMonthPicked(int month, int day);
 

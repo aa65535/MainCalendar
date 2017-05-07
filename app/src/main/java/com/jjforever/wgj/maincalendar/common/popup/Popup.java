@@ -97,6 +97,15 @@ public class Popup {
     }
 
     /**
+     * Gets content view.
+     *
+     * @return the content view
+     */
+    public View getContentView() {
+        return contentLayout.getChildAt(0);
+    }
+
+    /**
      * Sets content view.
      *
      * @param view the view
@@ -104,15 +113,6 @@ public class Popup {
     public void setContentView(View view) {
         contentLayout.removeAllViews();
         contentLayout.addView(view);
-    }
-
-    /**
-     * Gets content view.
-     *
-     * @return the content view
-     */
-    public View getContentView() {
-        return contentLayout.getChildAt(0);
     }
 
     /**

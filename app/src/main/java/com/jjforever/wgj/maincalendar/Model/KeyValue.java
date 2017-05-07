@@ -8,10 +8,10 @@ public class KeyValue {
     public long Index;
     public String Title;
 
-    public KeyValue(){
+    public KeyValue() {
     }
 
-    public KeyValue(long index, String title){
+    public KeyValue(long index, String title) {
         this.Index = index;
         this.Title = title;
     }

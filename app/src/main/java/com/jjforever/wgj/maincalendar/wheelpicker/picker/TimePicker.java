@@ -3,19 +3,18 @@ package com.jjforever.wgj.maincalendar.wheelpicker.picker;
 import android.app.Activity;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.jjforever.wgj.maincalendar.common.util.DateUtils;
+import com.jjforever.wgj.maincalendar.wheelpicker.widget.WheelView;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Calendar;
-
-import com.jjforever.wgj.maincalendar.common.util.DateUtils;
-import com.jjforever.wgj.maincalendar.wheelpicker.widget.WheelView;
 
 /**
  * 时间选择器
@@ -35,16 +34,6 @@ public class TimePicker extends WheelPicker {
     private OnTimePickListener onTimePickListener;
     private int mode;
     private String selectedHour = "", selectedMinute = "";
-
-    /**
-     * 安卓开发应避免使用枚举类（enum），因为相比于静态常量enum会花费两倍以上的内存。
-     *
-     * @link http ://developer.android.com/training/articles/memory.html#Overhead
-     */
-    @IntDef(flag = false, value = {HOUR_OF_DAY, HOUR})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Mode {
-    }
 
     /**
      * Instantiates a new Time picker.
@@ -157,6 +146,7 @@ public class TimePicker extends WheelPicker {
 
     /**
      * 字符串转整形
+     *
      * @param text 数字字符串
      * @return 整形数据
      */
@@ -184,6 +174,16 @@ public class TimePicker extends WheelPicker {
      */
     public int getSelectedMinute() {
         return stringToInt(selectedMinute);
+    }
+
+    /**
+     * 安卓开发应避免使用枚举类（enum），因为相比于静态常量enum会花费两倍以上的内存。
+     *
+     * @link http ://developer.android.com/training/articles/memory.html#Overhead
+     */
+    @IntDef(flag = false, value = {HOUR_OF_DAY, HOUR})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Mode {
     }
 
     /**

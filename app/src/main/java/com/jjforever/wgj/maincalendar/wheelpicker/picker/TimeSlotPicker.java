@@ -40,10 +40,11 @@ public class TimeSlotPicker extends WheelPicker {
 
     /**
      * 设置显示的时间段
-     * @param startHour 开始时
+     *
+     * @param startHour   开始时
      * @param startMinute 开始分
-     * @param endHour 结束时
-     * @param endMinute 结束分
+     * @param endHour     结束时
+     * @param endMinute   结束分
      */
     public void setTimeSlot(int startHour, int startMinute, int endHour, int endMinute) {
         this.mStartHour = DateUtils.fillZero(startHour);
@@ -54,6 +55,7 @@ public class TimeSlotPicker extends WheelPicker {
 
     /**
      * 设置监听方法
+     *
      * @param listener 监听触发事件
      */
     public void setOnTimeSlotPickListener(OnTimeSlotPickListener listener) {
@@ -170,6 +172,7 @@ public class TimeSlotPicker extends WheelPicker {
 
     /**
      * 字符串转整形
+     *
      * @param text 数字字符串
      * @return 整形数据
      */
@@ -188,10 +191,11 @@ public class TimeSlotPicker extends WheelPicker {
 
         /**
          * 时间段确定触发事件
-         * @param startHour 起始时
+         *
+         * @param startHour   起始时
          * @param startMinute 起始分
-         * @param endHour 结束时
-         * @param endMinute 结束分
+         * @param endHour     结束时
+         * @param endMinute   结束分
          */
         void onTimeSlotPicked(int startHour, int startMinute, int endHour, int endMinute);
 

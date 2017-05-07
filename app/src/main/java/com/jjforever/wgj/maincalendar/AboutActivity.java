@@ -47,6 +47,7 @@ public class AboutActivity extends ToolBarActivity {
 
     /**
      * 获取超链接字段
+     *
      * @return 超链接字符串
      */
     private SpannableString getClickableSpan(String aStr) {
@@ -54,7 +55,7 @@ public class AboutActivity extends ToolBarActivity {
         int endIndex = startIndex + mAuthorName.length();
         SpannableString spannableString = new SpannableString(aStr);
         //设置下划线文字
-//        spannableString.setSpan(new UnderlineSpan(), startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        //        spannableString.setSpan(new UnderlineSpan(), startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         //设置文字的单击事件
         spannableString.setSpan(new ClickableSpan() {
             @Override

@@ -23,7 +23,6 @@ import com.jjforever.wgj.maincalendar.Model.RecordShowType;
 import com.jjforever.wgj.maincalendar.Model.RecordType;
 import com.jjforever.wgj.maincalendar.Model.ShiftsWorkRecord;
 import com.jjforever.wgj.maincalendar.util.DateUtil;
-import com.jjforever.wgj.maincalendar.util.Helper;
 import com.jjforever.wgj.maincalendar.util.Holiday;
 import com.jjforever.wgj.maincalendar.util.LunarCalendar;
 
@@ -44,10 +43,10 @@ public class CalendarView extends View {
 
     // 当前月的日期
     private static final int CURRENT_MONTH_DAY = 0x01;
-//    // 上个月的日期
-//    private static final int LAST_MONTH_DAY = 0x02;
-//    // 下个月的日期
-//    private static final int NEXT_MONTH_DAY = 0x04;
+    //    // 上个月的日期
+    //    private static final int LAST_MONTH_DAY = 0x02;
+    //    // 下个月的日期
+    //    private static final int NEXT_MONTH_DAY = 0x04;
     // 当天日期
     private static final int TODAY = 0x08;
     // 点击的日期
@@ -56,6 +55,15 @@ public class CalendarView extends View {
     // 点击标志绘制工具
     private static Paint mClickPaint;
 
+    static {
+        // 点击绘制工具载入一次即可
+        mClickPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mClickPaint.setStyle(Paint.Style.FILL);
+        mClickPaint.setStrokeWidth(4.0f);
+    }
+
+    // 日常记录
+    ArrayList<ICalendarRecord> mDailyRecords = null;
     // 日期绘制工具
     private Paint mTextPaint;
     // 农历及节假日绘制工具
@@ -80,26 +88,6 @@ public class CalendarView extends View {
     private float mDownX;
     private float mDownY;
     private Handler mHandler = new Handler();
-
-    // 日常记录
-    ArrayList<ICalendarRecord> mDailyRecords = null;
-
-    // 回调接口函数定义
-    public interface CallBack {
-        // 回调点击的日期
-        void clickDate(CalendarView view, Cell cell);
-        // 回调cell的高度确定列表层高度
-        void onMeasureCellHeight(CalendarView view, int cellSpace);
-        // 回调滑动viewPager改变的日期
-        void changeDate(CalendarView view, LunarCalendar date);
-    }
-
-    static {
-        // 点击绘制工具载入一次即可
-        mClickPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mClickPaint.setStyle(Paint.Style.FILL);
-        mClickPaint.setStrokeWidth(4.0f);
-    }
 
     public CalendarView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -135,9 +123,10 @@ public class CalendarView extends View {
 
     /**
      * 获取当前显示的行数
+     *
      * @return 该月显示的行数
      */
-    public int getRowCount(){
+    public int getRowCount() {
         int count = 0;
         for (Row tmpRow : mRows) {
             if (tmpRow != null) {
@@ -150,9 +139,10 @@ public class CalendarView extends View {
 
     /**
      * 获取当前显示月份所有记录集合 闹钟与日常
+     *
      * @return 当前月所有记录集合
      */
-    public ArrayList<ICalendarRecord> getCurMonthRecords(){
+    public ArrayList<ICalendarRecord> getCurMonthRecords() {
         ArrayList<ICalendarRecord> tmpLst = new ArrayList<>();
         for (Row tmpRow : mRows) {
             if (tmpRow == null) {
@@ -222,7 +212,7 @@ public class CalendarView extends View {
     /**
      * 切换到当前页面触发一系列方法
      */
-    public void callBackDate(){
+    public void callBackDate() {
         mCallBack.changeDate(this, mShowDate);
         mCallBack.clickDate(this, mClickCell);
         mCallBack.onMeasureCellHeight(this, mCellSpace);
@@ -230,18 +220,19 @@ public class CalendarView extends View {
 
     /**
      * 从集合中获取指定日期的记录集合
+     *
      * @param records 记录集合
-     * @param date 指定日期
+     * @param date    指定日期
      * @return 指定日期的记录集合
      */
-    private ArrayList<ICalendarRecord> getDateRecords(ArrayList<ICalendarRecord> records, LunarCalendar date){
-        if (records == null || records.size() <= 0){
+    private ArrayList<ICalendarRecord> getDateRecords(ArrayList<ICalendarRecord> records, LunarCalendar date) {
+        if (records == null || records.size() <= 0) {
             return null;
         }
 
         ArrayList<ICalendarRecord> tmpLst = new ArrayList<>();
-        for (ICalendarRecord tmpRecord : records){
-            if (DateUtil.isSameDay(tmpRecord.getRecordTime(), date)){
+        for (ICalendarRecord tmpRecord : records) {
+            if (DateUtil.isSameDay(tmpRecord.getRecordTime(), date)) {
                 tmpLst.add(tmpRecord);
             }
         }
@@ -265,7 +256,7 @@ public class CalendarView extends View {
 
         ShiftsWorkRecord workRecord = ShiftsWorkRecordMng.getDisplayWork();
         int dayNo = -1;
-        if (workRecord != null){
+        if (workRecord != null) {
             dayNo = workRecord.getDayNo(curYear, curMonth, 1);
         }
         mDailyRecords = DailyRecordMng.selectByMonth(curYear, curMonth);
@@ -288,27 +279,26 @@ public class CalendarView extends View {
                     }
                     newCell.ParentView = this;
                     mRows[j].cells[i] = newCell;
-                    if (dayNo < 0){
+                    if (dayNo < 0) {
                         // 小于0说明没有轮班记录
                         continue;
                     }
                     newCell.WorkType = workRecord.getItems().get(dayNo).getTitle();
                     dayNo++;
-                    if (dayNo >= workRecord.getPeriod()){
+                    if (dayNo >= workRecord.getPeriod()) {
                         dayNo = 0;
                     }
                 }
             }
-            if (mRows[j].getCellCount() == 0){
+            if (mRows[j].getCellCount() == 0) {
                 // 一行没有数据则置为null
                 mRows[j] = null;
             }
         }
-        if (mClickCell != null){
+        if (mClickCell != null) {
             mRows[mClickCell.RowIndex].cells[mClickCell.ColIndex].State |= CLICK_DAY;
             mClickCell = mRows[mClickCell.RowIndex].cells[mClickCell.ColIndex];
-        }
-        else {
+        } else {
             // 定位到显示的日期
             Point tmpPoint = getDateCell(firstDayWeek, mShowDate);
             mRows[tmpPoint.y].cells[tmpPoint.x].State |= CLICK_DAY;
@@ -321,7 +311,7 @@ public class CalendarView extends View {
      * 更新日期
      */
     public void update(boolean clear) {
-        if (clear && mClickCell != null){
+        if (clear && mClickCell != null) {
             mClickCell.State &= ~TODAY;
         }
         fillDate();
@@ -330,17 +320,17 @@ public class CalendarView extends View {
 
     /**
      * 获取当前点击的单元格
+     *
      * @return 选中的单元格
      */
-    public Cell getClickCell(){
+    public Cell getClickCell() {
         return mClickCell;
     }
 
     /**
      * 更新日期
      */
-    public void update()
-    {
+    public void update() {
         update(false);
     }
 
@@ -354,9 +344,10 @@ public class CalendarView extends View {
 
     /**
      * 定位到指定日期
+     *
      * @param date 要定位的日期
      */
-    public void locateToDay(LunarCalendar date){
+    public void locateToDay(LunarCalendar date) {
         mClickCell = null;
         AppConstants.DLog("locate to " + date.toRecordTime());
         mShowDate = date;
@@ -365,22 +356,21 @@ public class CalendarView extends View {
 
     /**
      * 根据月首日为星期几和当前日期获取当前日期在本月的位置
+     *
      * @param weekDay 首日为星期几
-     * @param date 当前日期
+     * @param date    当前日期
      * @return 当前日期在本月的位置
      */
-    private Point getDateCell(int weekDay, LunarCalendar date)
-    {
+    private Point getDateCell(int weekDay, LunarCalendar date) {
         int tmpDate = date.get(Calendar.DAY_OF_MONTH);
         int tmpRow = tmpDate / TOTAL_COL;
         // 从0开始计数
         int tmpCol = tmpDate % TOTAL_COL + weekDay - 1;
-        if (tmpCol >= TOTAL_COL){
+        if (tmpCol >= TOTAL_COL) {
             // 往下挪一行
             tmpCol -= TOTAL_COL;
             tmpRow += 1;
-        }
-        else if (tmpCol < 0){
+        } else if (tmpCol < 0) {
             tmpCol += TOTAL_COL;
             tmpRow -= 1;
         }
@@ -391,9 +381,10 @@ public class CalendarView extends View {
     /**
      * 异步更新
      */
-    private void AsyncUpdate(){
+    private void AsyncUpdate() {
         mHandler.postDelayed(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 update();
             }
         }, 200);
@@ -401,18 +392,20 @@ public class CalendarView extends View {
 
     /**
      * 以指定日期为基点向后一个月
+     *
      * @param date 基点日期
      */
-    public void rightSlide(LunarCalendar date){
+    public void rightSlide(LunarCalendar date) {
         this.mShowDate = date;
         rightSlide();
     }
 
     /**
      * 以指定日期为基点向前一个月
+     *
      * @param date 基点日期
      */
-    public void leftSlide(LunarCalendar date){
+    public void leftSlide(LunarCalendar date) {
         this.mShowDate = date;
         leftSlide();
     }
@@ -433,8 +426,7 @@ public class CalendarView extends View {
         }
         if (DateUtil.isCurrentMonth(mShowDate)) {
             mShowDate.set(Calendar.DAY_OF_MONTH, DateUtil.getCurrentMonthDay());
-        }
-        else {
+        } else {
             mShowDate.set(Calendar.DAY_OF_MONTH, 1);
         }
         //update();
@@ -457,8 +449,7 @@ public class CalendarView extends View {
         }
         if (DateUtil.isCurrentMonth(mShowDate)) {
             mShowDate.set(Calendar.DAY_OF_MONTH, DateUtil.getCurrentMonthDay());
-        }
-        else {
+        } else {
             mShowDate.set(Calendar.DAY_OF_MONTH, 1);
         }
         //update();
@@ -501,6 +492,7 @@ public class CalendarView extends View {
 
     /**
      * 绘制点击的单元格
+     *
      * @param col 点击单元格所在列
      * @param row 点击单元格所在行
      */
@@ -508,7 +500,7 @@ public class CalendarView extends View {
         if (col >= TOTAL_COL || row >= TOTAL_ROW) {
             return;
         }
-        if (mRows[row] == null || mRows[row].cells[col] == null){
+        if (mRows[row] == null || mRows[row].cells[col] == null) {
             return;
         }
         if (mClickCell != null) {
@@ -524,20 +516,32 @@ public class CalendarView extends View {
         }
     }
 
-        // 日期行定义
-        class Row {
-            // 行所在索引
-            int rowIndex;
+    // 回调接口函数定义
+    public interface CallBack {
+        // 回调点击的日期
+        void clickDate(CalendarView view, Cell cell);
+
+        // 回调cell的高度确定列表层高度
+        void onMeasureCellHeight(CalendarView view, int cellSpace);
+
+        // 回调滑动viewPager改变的日期
+        void changeDate(CalendarView view, LunarCalendar date);
+    }
+
+    // 日期行定义
+    class Row {
+        // 行所在索引
+        int rowIndex;
+        // 每行的单元格集合
+        Cell[] cells = new Cell[TOTAL_COL];
 
         Row(int index) {
             this.rowIndex = index;
         }
 
-        // 每行的单元格集合
-        Cell[] cells = new Cell[TOTAL_COL];
-
         /**
          * 绘制行单元格
+         *
          * @param canvas 要绘制的样式
          */
         void drawCells(Canvas canvas) {
@@ -550,9 +554,10 @@ public class CalendarView extends View {
 
         /**
          * 获取该行有效单元格个数
+         *
          * @return 有效单元格个数
          */
-        int getCellCount(){
+        int getCellCount() {
             int count = 0;
             for (Cell tmpCell : cells) {
                 if (tmpCell != null) {
@@ -568,16 +573,16 @@ public class CalendarView extends View {
     public class Cell {
         // 单元格的日期
         public LunarCalendar CellDate;
+        // 节假日记录等集合
+        public ArrayList<ICalendarRecord> Records;
+        // 该单元所在页面
+        public CalendarView ParentView;
         // 单元格相对于当前日期的状态,可能出现组合状态
         int State;
         // 单元格所在列索引
         int ColIndex;
         // 单元格所在行索引
         int RowIndex;
-        // 节假日记录等集合
-        public ArrayList<ICalendarRecord> Records;
-        // 该单元所在页面
-        public CalendarView ParentView;
         // 轮班类型，白班，夜班，休息
         String WorkType;
 
@@ -590,18 +595,18 @@ public class CalendarView extends View {
 
             // 日常记录
             this.Records = getDateRecords(mDailyRecords, date);
-            if (this.Records == null){
+            if (this.Records == null) {
                 this.Records = new ArrayList<>();
             }
 
             // 闹钟记录
             ArrayList<AlarmRecord> alarmLst = AlarmRecordMng.getRecords(date);
             //AppConstants.DLog("alarm size is " + alarmLst.size());
-            if (alarmLst != null && alarmLst.size() > 0){
-                for (AlarmRecord tmpAlarm : alarmLst){
+            if (alarmLst != null && alarmLst.size() > 0) {
+                for (AlarmRecord tmpAlarm : alarmLst) {
                     // 设置本日期
                     AlarmRecord addAlarm = tmpAlarm;
-                    if (tmpAlarm.getActionType() == AlarmRecord.BY_DAY){
+                    if (tmpAlarm.getActionType() == AlarmRecord.BY_DAY) {
                         addAlarm = tmpAlarm.depthClone();
                     }
                     addAlarm.setRecordTime(date);
@@ -610,26 +615,27 @@ public class CalendarView extends View {
             }
 
             ArrayList<ICalendarRecord> tmpLst = Holiday.getHolidays(date);
-            if (tmpLst != null && tmpLst.size() > 0){
+            if (tmpLst != null && tmpLst.size() > 0) {
                 this.Records.addAll(tmpLst);
             }
-            if (this.Records.isEmpty()){
+            if (this.Records.isEmpty()) {
                 this.Records = null;
             }
         }
 
         /**
          * 如果有节假日则返回节假日信息
+         *
          * @return 节假日信息，没有返回null
          */
-        public ICalendarRecord getHoliday(){
-            if (this.Records == null){
+        public ICalendarRecord getHoliday() {
+            if (this.Records == null) {
                 return null;
             }
 
-            for (ICalendarRecord tmpRecord : this.Records){
+            for (ICalendarRecord tmpRecord : this.Records) {
                 if (tmpRecord.getType() == RecordType.LUNAR_HOLIDAY
-                        || tmpRecord.getType() == RecordType.SOLAR_HOLIDAY){
+                        || tmpRecord.getType() == RecordType.SOLAR_HOLIDAY) {
                     return tmpRecord;
                 }
             }
@@ -641,17 +647,17 @@ public class CalendarView extends View {
         void drawSelf(Canvas canvas) {
             // 是否绘制圆点
             boolean drawCircle = false;
-            if ((State & CURRENT_MONTH_DAY) != 0){
+            if ((State & CURRENT_MONTH_DAY) != 0) {
                 mTextPaint.setColor(ThemeStyle.CurrentMonth);
                 mLunarPaint.setColor(ThemeStyle.CurrentLunar);
             }
 
-            if ((State & TODAY) != 0){
+            if ((State & TODAY) != 0) {
                 mTextPaint.setColor(ThemeStyle.Today);
                 mLunarPaint.setColor(ThemeStyle.TodayLunar);
             }
 
-            if ((State & CLICK_DAY) != 0){
+            if ((State & CLICK_DAY) != 0) {
                 // 绘制点击效果
                 canvas.drawLine((float) (mCellSpace * (ColIndex + 0.1)),
                         (float) ((RowIndex + 0.85) * mCellSpace),
@@ -662,25 +668,23 @@ public class CalendarView extends View {
 
             // 绘制农历或节假日信息
             String content = null;
-            if (this.Records != null && !this.Records.isEmpty()){
-                for (ICalendarRecord tmpRecord : this.Records){
+            if (this.Records != null && !this.Records.isEmpty()) {
+                for (ICalendarRecord tmpRecord : this.Records) {
                     // 寻找闹钟
-                    if (tmpRecord.getType() == RecordType.ALARM_RECORD){
+                    if (tmpRecord.getType() == RecordType.ALARM_RECORD) {
                         drawCircle = true;
                         break;
                     }
                 }
-                for (ICalendarRecord tmpRecord : this.Records){
-                    if ((tmpRecord.showType() & RecordShowType.TEXT) != 0){
+                for (ICalendarRecord tmpRecord : this.Records) {
+                    if ((tmpRecord.showType() & RecordShowType.TEXT) != 0) {
                         content = tmpRecord.getTitle();
-                        if ((tmpRecord.showType() & RecordShowType.DOT) != 0)
-                        {
+                        if ((tmpRecord.showType() & RecordShowType.DOT) != 0) {
                             int recordType = tmpRecord.getType();
                             if (recordType == RecordType.LUNAR_HOLIDAY
-                                    || recordType == RecordType.SOLAR_HOLIDAY){
+                                    || recordType == RecordType.SOLAR_HOLIDAY) {
                                 mTextPaint.setColor(ThemeStyle.Holiday);
-                            }
-                            else if (recordType == RecordType.DAILY_RECORD){
+                            } else if (recordType == RecordType.DAILY_RECORD) {
                                 mTextPaint.setColor(ThemeStyle.Daily);
                             }
                         }
@@ -693,25 +697,27 @@ public class CalendarView extends View {
                 content = DateUtil.getSubCalendar(CellDate);
             }
 
-            if (drawCircle){
+            if (drawCircle) {
                 String circleChar = "•";
                 canvas.drawText(circleChar, (float) (mCellSpace * (ColIndex + 0.85)) - mCirclePaint.measureText(circleChar),
                         (float) ((RowIndex + 0.25) * mCellSpace), mCirclePaint);
             }
 
-            if (!Helper.isNullOrEmpty(this.WorkType)){
+            if (!TextUtils.isEmpty(this.WorkType)) {
                 boolean isPaint = false;
-                if (WorkType.equals("白班")){
+                if (WorkType.equals("白班")) {
                     isPaint = true;
                     mWorkPaint.setColor(ThemeStyle.WorkDay);
-                }
-                else if (WorkType.equals("夜班")){
+                } else if (WorkType.equals("夜班")) {
                     isPaint = true;
                     mWorkPaint.setColor(ThemeStyle.WorkNight);
-                }
+                }/* else {
+                    isPaint = true;
+                    mWorkPaint.setColor(ThemeStyle.RestDay);
+                }*/
 
-                if (isPaint){
-                    canvas.drawRect((float) (mCellSpace * ColIndex), (float)((RowIndex) * mCellSpace),
+                if (isPaint) {
+                    canvas.drawRect((float) (mCellSpace * ColIndex), (float) ((RowIndex) * mCellSpace),
                             (float) (mCellSpace * (ColIndex + 1)), (float) ((RowIndex + 1) * mCellSpace), mWorkPaint);
                 }
             }
@@ -719,14 +725,14 @@ public class CalendarView extends View {
             // 绘制日期
             String number = String.valueOf(CellDate.get(Calendar.DAY_OF_MONTH));
             canvas.drawText(number,
-                    (float) ((ColIndex + 0.5) * mCellSpace - mTextPaint.measureText(number)/2),
+                    (float) ((ColIndex + 0.5) * mCellSpace - mTextPaint.measureText(number) / 2),
                     (float) ((RowIndex + 0.5) * mCellSpace - mTextPaint.measureText(number, 0, 1) / 2), mTextPaint);
 
             // 字符串过长进行截取
             content = TextUtils.ellipsize(content, new TextPaint(mLunarPaint), mCellSpace * 0.8f,
                     TextUtils.TruncateAt.END).toString();
             canvas.drawText(content,
-                    (float) ((ColIndex + 0.5) * mCellSpace - mLunarPaint.measureText(content)/2),
+                    (float) ((ColIndex + 0.5) * mCellSpace - mLunarPaint.measureText(content) / 2),
                     (float) ((RowIndex + 0.8) * mCellSpace - mLunarPaint.measureText(content, 0, 1) / 2), mLunarPaint);
         }
     }

@@ -1,6 +1,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- 主界面用到的字符串 -->
-    <string name="app_name">Main日历</string>
+    <string name="app_name">日历</string>
     <string name="action_daily">日常记录</string>
     <string name="action_alarm_clock">闹钟记录</string>
     <string name="action_work_list">轮班记录</string>

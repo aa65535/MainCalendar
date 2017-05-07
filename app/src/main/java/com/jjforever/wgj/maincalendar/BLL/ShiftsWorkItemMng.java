@@ -19,16 +19,17 @@ public final class ShiftsWorkItemMng {
     /**
      * 禁止外部实例化
      */
-    private ShiftsWorkItemMng(){
+    private ShiftsWorkItemMng() {
 
     }
 
     /**
      * 根据记录获取ContentValues
+     *
      * @param record 轮班记录
      * @return ContentValues
      */
-    private static ContentValues getValues(ShiftsWorkItem record){
+    private static ContentValues getValues(ShiftsWorkItem record) {
         // 实例化常量值
         ContentValues cValue = new ContentValues();
         // 所属轮班索引
@@ -47,18 +48,17 @@ public final class ShiftsWorkItemMng {
 
     /**
      * 往数据库中添加一条记录
+     *
      * @param record 记录
      * @return 是否成功
      */
-    public static long insert(ShiftsWorkItem record){
-        try
-        {
+    public static long insert(ShiftsWorkItem record) {
+        try {
             // 实例化常量值
             ContentValues cValue = getValues(record);
             //调用insert()方法插入数据
             return DatabaseHelper.SQLiteDb.insert(TABLE_NAME, null, cValue);
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             AppConstants.WLog(ex.toString());
             return -1;
         }
@@ -66,16 +66,16 @@ public final class ShiftsWorkItemMng {
 
     /**
      * 更新记录
+     *
      * @param record 要更新的记录
      * @return 是否更新成功
      */
-    public static boolean update(ShiftsWorkItem record){
-        try{
+    public static boolean update(ShiftsWorkItem record) {
+        try {
             ContentValues cValue = getValues(record);
             return DatabaseHelper.SQLiteDb.update(TABLE_NAME, cValue, "item_index=?",
-                    new String[] { String.valueOf(record.getIndex()) }) > 0;
-        }
-        catch (Exception ex){
+                    new String[]{String.valueOf(record.getIndex())}) > 0;
+        } catch (Exception ex) {
             AppConstants.WLog(ex.toString());
             return false;
         }
@@ -83,15 +83,15 @@ public final class ShiftsWorkItemMng {
 
     /**
      * 根据索引删除一条日常记录
+     *
      * @param index 记录索引
      * @return 是否成功
      */
-    public static boolean delete(long index){
-        try{
+    public static boolean delete(long index) {
+        try {
             return DatabaseHelper.SQLiteDb.delete(TABLE_NAME, "item_index=?",
-                    new String[] { String.valueOf(index) }) >= 0;
-        }
-        catch (Exception ex){
+                    new String[]{String.valueOf(index)}) >= 0;
+        } catch (Exception ex) {
             AppConstants.WLog(ex.toString());
             return false;
         }
@@ -99,15 +99,15 @@ public final class ShiftsWorkItemMng {
 
     /**
      * 删除指定轮班记录下的设置项
+     *
      * @param index 轮班索引
      * @return 是否成功
      */
-    public static boolean deleteInWork(long index){
-        try{
+    public static boolean deleteInWork(long index) {
+        try {
             return DatabaseHelper.SQLiteDb.delete(TABLE_NAME, "work_index=?",
-                    new String[] { String.valueOf(index) }) >= 0;
-        }
-        catch (Exception ex){
+                    new String[]{String.valueOf(index)}) >= 0;
+        } catch (Exception ex) {
             AppConstants.WLog(ex.toString());
             return false;
         }
@@ -115,46 +115,43 @@ public final class ShiftsWorkItemMng {
 
     /**
      * 根据索引集合批量删除记录
+     *
      * @param indexs 索引集合
      * @return 删除成功与否
      */
-    public static boolean delete(ArrayList<Long> indexs){
+    public static boolean delete(ArrayList<Long> indexs) {
         // 采用事务处理，确保数据完整性
         DatabaseHelper.SQLiteDb.beginTransaction();
-        try
-        {
-            for (long index : indexs)
-            {
+        try {
+            for (long index : indexs) {
                 DatabaseHelper.SQLiteDb.delete(TABLE_NAME, "item_index=?",
-                        new String[] { String.valueOf(index) });
+                        new String[]{String.valueOf(index)});
             }
             // 设置事务成功完成
             DatabaseHelper.SQLiteDb.setTransactionSuccessful();
             return true;
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             AppConstants.WLog(ex.toString());
             return false;
-        }
-        finally
-        {
+        } finally {
             DatabaseHelper.SQLiteDb.endTransaction(); // 结束事务
         }
     }
 
     /**
      * 根据条件查询所有的日常记录
-     * @param where where条件
-     * @param args where条件的参数
+     *
+     * @param where   where条件
+     * @param args    where条件的参数
      * @param orderBy 排序语句
-     * @param limit 限制语句
+     * @param limit   限制语句
      * @return 日常记录集合
      */
-    public static ArrayList<ShiftsWorkItem> select(String where, String[] args, String orderBy, String limit){
+    public static ArrayList<ShiftsWorkItem> select(String where, String[] args, String orderBy, String limit) {
         ArrayList<ShiftsWorkItem> tmpLst = new ArrayList<>();
 
         Cursor cursor = DatabaseHelper.SQLiteDb.query(TABLE_NAME, null, where, args, null, null, orderBy, limit);
-        if (cursor == null){
+        if (cursor == null) {
             return tmpLst;
         }
 
@@ -171,11 +168,9 @@ public final class ShiftsWorkItemMng {
 
                 tmpLst.add(tmpRecord);
             }
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             AppConstants.WLog(ex.toString());
-        }
-        finally {
+        } finally {
             cursor.close();
         }
 
@@ -184,12 +179,13 @@ public final class ShiftsWorkItemMng {
 
     /**
      * 获取指定轮班记录下的设置项
+     *
      * @param index 轮班记录索引
      * @return 设置项
      */
-    public static ArrayList<ShiftsWorkItem> selectInWork(long index){
+    public static ArrayList<ShiftsWorkItem> selectInWork(long index) {
         return select("work_index=?", new String[]{String.valueOf(index)},
-                    "day_no ASC", null);
+                "day_no ASC", null);
     }
 
     /**
@@ -197,12 +193,12 @@ public final class ShiftsWorkItemMng {
      * @param index 索引
      * @return 指定索引的日常记录
      */
-//    public static ShiftsWorkItem select(long index){
-//        ArrayList<ShiftsWorkItem> tmpLst = select("item_index=?", new String[]{String.valueOf(index)}, null, null);
-//        if (tmpLst == null || tmpLst.size() <= 0){
-//            return null;
-//        }
-//
-//        return tmpLst.get(0);
-//    }
+    //    public static ShiftsWorkItem select(long index){
+    //        ArrayList<ShiftsWorkItem> tmpLst = select("item_index=?", new String[]{String.valueOf(index)}, null, null);
+    //        if (tmpLst == null || tmpLst.size() <= 0){
+    //            return null;
+    //        }
+    //
+    //        return tmpLst.get(0);
+    //    }
 }

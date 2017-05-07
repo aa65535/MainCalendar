@@ -16,7 +16,6 @@ import com.jjforever.wgj.maincalendar.BLL.AlarmRecordMng;
 import com.jjforever.wgj.maincalendar.BLL.DatabaseHelper;
 import com.jjforever.wgj.maincalendar.Model.AlarmRecord;
 import com.jjforever.wgj.maincalendar.Model.AlarmTime;
-import com.jjforever.wgj.maincalendar.util.Helper;
 import com.jjforever.wgj.maincalendar.util.LunarCalendar;
 
 import java.util.ArrayList;
@@ -34,13 +33,13 @@ public class CalendarService extends Service {
     private static int onHourMs = 60 * 60 * 1000;
 
     // 是否显示闹钟图标 修改，不显示闹钟图标，不占用系统闹钟工具闹钟图标
-//    private boolean isShowIcon = false;
+    //    private boolean isShowIcon = false;
 
     // 解锁手机
     private PowerManager.WakeLock mWakeLock;
 
     // 当前日期
-//    private LunarCalendar mLunar;
+    //    private LunarCalendar mLunar;
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -49,15 +48,15 @@ public class CalendarService extends Service {
 
     @Override
     public void onCreate() {
-//        mLunar = new LunarCalendar(Calendar.getInstance());
-        if (DatabaseHelper.isNeedInit()){
+        //        mLunar = new LunarCalendar(Calendar.getInstance());
+        if (DatabaseHelper.isNeedInit()) {
             // 载入必须服务
             AppConstants.loadGlobalService(getBaseContext());
         }
-//        AlarmAlertWakeLock.releaseCpuLock();
+        //        AlarmAlertWakeLock.releaseCpuLock();
         // 提前统一设置下图标状态
-//        isShowIcon = false;
-//        setStatusIcon(true);
+        //        isShowIcon = false;
+        //        setStatusIcon(true);
         AppConstants.DLog("Alarm service onCreate.");
         super.onCreate();
     }
@@ -66,52 +65,51 @@ public class CalendarService extends Service {
      * 在状态栏显示闹钟图标
      * @param isShow 是否显示
      */
-//    private void setStatusIcon(boolean isShow){
-//        if (isShowIcon != isShow) {
-//            isShowIcon = isShow;
-//            Intent localIntent = new Intent("android.intent.action.ALARM_CHANGED");
-//            localIntent.putExtra("alarmSet", isShow);
-//            getBaseContext().sendBroadcast(localIntent);
-//        }
-//    }
+    //    private void setStatusIcon(boolean isShow){
+    //        if (isShowIcon != isShow) {
+    //            isShowIcon = isShow;
+    //            Intent localIntent = new Intent("android.intent.action.ALARM_CHANGED");
+    //            localIntent.putExtra("alarmSet", isShow);
+    //            getBaseContext().sendBroadcast(localIntent);
+    //        }
+    //    }
 
     /**
      * 设置下次触发时间
+     *
      * @param ms 距离下次的毫秒数
      */
-    private void setAlarmTime(long ms){
+    private void setAlarmTime(long ms) {
         AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
         Intent tmpIntent = new Intent(this, CalendarReceiver.class);
         tmpIntent.setAction(AppConstants.MAIN_CALENDAR_SERVICE);
         PendingIntent pi = PendingIntent.getBroadcast(this, 0, tmpIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        if (Helper.isKitKatOrLater()) {
-            manager.setExact(AlarmManager.RTC_WAKEUP, ms, pi);
-        } else {
-            manager.set(AlarmManager.RTC_WAKEUP, ms, pi);
-        }
+        manager.setExact(AlarmManager.RTC_WAKEUP, ms, pi);
+    }
+
+    /**
+     * 获取最近一次闹钟触发时间
+     *
+     * @return 闹钟时间
+     */
+    private int getLastTime() {
+        SharedPreferences preferences = getSharedPreferences(AppConstants.SETTING_PREFERENCE, Context.MODE_PRIVATE);
+        return preferences.getInt(LastAlarmTime, -1);
     }
 
     /**
      * 更新最近一次闹钟触发时间
+     *
      * @param time 闹钟时间
      */
-    private void setLastTime(int time){
+    private void setLastTime(int time) {
         SharedPreferences.Editor preferences = getSharedPreferences(AppConstants.SETTING_PREFERENCE, Context.MODE_PRIVATE).edit();
         preferences.putInt(LastAlarmTime, time);
         preferences.apply();
     }
 
-    /**
-     * 获取最近一次闹钟触发时间
-     * @return 闹钟时间
-     */
-    private int getLastTime(){
-        SharedPreferences preferences = getSharedPreferences(AppConstants.SETTING_PREFERENCE, Context.MODE_PRIVATE);
-        return preferences.getInt(LastAlarmTime, -1);
-    }
-
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId){
+    public int onStartCommand(Intent intent, int flags, int startId) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -135,24 +133,24 @@ public class CalendarService extends Service {
                         tmpMs += AlarmRecord.DAY_MILLISECONDS;
                     }
 
-                    if (tmpMs > onHourMs){
+                    if (tmpMs > onHourMs) {
                         // 至少一个小时唤醒一次，防止被深度睡眠掉。。。
                         tmpMs = onHourMs;
                     }
-//                    setStatusIcon(true);
+                    //                    setStatusIcon(true);
                 }
-//                else{
-//                    setStatusIcon(false);
-//                }
+                //                else{
+                //                    setStatusIcon(false);
+                //                }
                 // 设置下次响应时间
                 curMs += tmpMs;
                 AppConstants.DLog(String.format(Locale.getDefault(),
-                                    "Next alarm time: %tF %<tT", curMs));
+                        "Next alarm time: %tF %<tT", curMs));
                 // 设置下次触发时间
                 setAlarmTime(curMs);
 
                 int lastTime = getLastTime();
-                if (lastTime >= 0){
+                if (lastTime >= 0) {
                     // 同一天同一分钟则不处理
                     if (lastTime == curTime.getTime()) {
                         AppConstants.DLog("Repeat alarm " + curTime.toString());
@@ -177,7 +175,7 @@ public class CalendarService extends Service {
                     noticeIntent.putExtras(bundle);
                     noticeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     // 提醒过的一次性闹钟自动设置为暂停
-                    for (AlarmRecord tmpRecord : tmpLst){
+                    for (AlarmRecord tmpRecord : tmpLst) {
                         if (tmpRecord.getActionType() == AlarmRecord.ONCE
                                 || tmpRecord.getActionType() == AlarmRecord.BY_LUNAR_ONCE) {
                             tmpRecord.setPause(true);
@@ -197,9 +195,9 @@ public class CalendarService extends Service {
     public void onDestroy() {
         super.onDestroy();
         DatabaseHelper.closeDatabase();
-//        setStatusIcon(false);
-//        releaseCpuLock();
-//        AlarmAlertWakeLock.releaseCpuLock();
+        //        setStatusIcon(false);
+        //        releaseCpuLock();
+        //        AlarmAlertWakeLock.releaseCpuLock();
         AppConstants.DLog("Alarm service onDestroy");
         Intent localIntent = new Intent();
         // 销毁时重新启动Service

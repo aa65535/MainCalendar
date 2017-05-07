@@ -18,11 +18,10 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.jjforever.wgj.maincalendar.common.util.LogUtils;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.jjforever.wgj.maincalendar.common.util.LogUtils;
-import com.jjforever.wgj.maincalendar.monthui.ThemeStyle;
 
 /**
  * 基于原版作了一下修改：
@@ -405,21 +404,21 @@ public class WheelView extends ScrollView {
     /**
      * Sets text color.
      *
+     * @param textColor the text color
+     */
+    public void setTextColor(@ColorInt int textColor) {
+        this.textColorFocus = textColor;
+    }
+
+    /**
+     * Sets text color.
+     *
      * @param textColorNormal the text color normal
      * @param textColorFocus  the text color focus
      */
     public void setTextColor(@ColorInt int textColorNormal, @ColorInt int textColorFocus) {
         this.textColorNormal = textColorNormal;
         this.textColorFocus = textColorFocus;
-    }
-
-    /**
-     * Sets text color.
-     *
-     * @param textColor the text color
-     */
-    public void setTextColor(@ColorInt int textColor) {
-        this.textColorFocus = textColor;
     }
 
     /**
@@ -480,22 +479,20 @@ public class WheelView extends ScrollView {
     }
 
     /**
-     * 从0开始计数，所有项包括偏移量
-     *
-     * @param index
+     * Use {@link #getSelectedItem()} instead
      */
-    private void setSelectedIndex(final int index) {
-        isUserScroll = false;
-        this.post(new Runnable() {
-            @Override
-            public void run() {
-                //滚动到选中项的位置
-                smoothScrollTo(0, index * itemHeight);
-                //选中这一项的值
-                selectedIndex = index + offset;
-                onSelectedCallBack();
-            }
-        });
+    @Deprecated
+    public String getSeletedItem() {
+        return getSelectedItem();
+    }
+
+    /**
+     * Gets selected item.
+     *
+     * @return the selected item
+     */
+    public String getSelectedItem() {
+        return items.get(selectedIndex);
     }
 
     /**
@@ -514,23 +511,6 @@ public class WheelView extends ScrollView {
     }
 
     /**
-     * Use {@link #getSelectedItem()} instead
-     */
-    @Deprecated
-    public String getSeletedItem() {
-        return getSelectedItem();
-    }
-
-    /**
-     * Gets selected item.
-     *
-     * @return the selected item
-     */
-    public String getSelectedItem() {
-        return items.get(selectedIndex);
-    }
-
-    /**
      * Use {@link #getSelectedIndex()} instead
      */
     @Deprecated
@@ -545,6 +525,25 @@ public class WheelView extends ScrollView {
      */
     public int getSelectedIndex() {
         return selectedIndex - offset;
+    }
+
+    /**
+     * 从0开始计数，所有项包括偏移量
+     *
+     * @param index
+     */
+    private void setSelectedIndex(final int index) {
+        isUserScroll = false;
+        this.post(new Runnable() {
+            @Override
+            public void run() {
+                //滚动到选中项的位置
+                smoothScrollTo(0, index * itemHeight);
+                //选中这一项的值
+                selectedIndex = index + offset;
+                onSelectedCallBack();
+            }
+        });
     }
 
     /**

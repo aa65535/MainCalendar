@@ -24,8 +24,6 @@ import com.jjforever.wgj.maincalendar.common.util.ConvertUtils;
 
 import java.util.Locale;
 
-import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
-
 
 /**
  * 颜色选择器。

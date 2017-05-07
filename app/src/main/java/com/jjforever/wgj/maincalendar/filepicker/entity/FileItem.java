@@ -14,21 +14,21 @@ public class FileItem {
     private boolean isDirectory = false;
 
     /**
-     * Sets icon.
-     *
-     * @param icon the icon
-     */
-    public void setIcon(int icon) {
-        this.icon = icon;
-    }
-
-    /**
      * Gets icon.
      *
      * @return the icon
      */
     public int getIcon() {
         return icon;
+    }
+
+    /**
+     * Sets icon.
+     *
+     * @param icon the icon
+     */
+    public void setIcon(int icon) {
+        this.icon = icon;
     }
 
     /**

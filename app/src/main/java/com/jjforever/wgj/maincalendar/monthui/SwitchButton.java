@@ -23,72 +23,40 @@ import com.jjforever.wgj.maincalendar.R;
  * 重写开关按钮
  */
 public class SwitchButton extends CheckBox {
-    private Paint mPaint;
-
-    private Bitmap mBottom;
-
-    private Bitmap mCurBtnPic;
-
-    private Bitmap mBtnPressed;
-
-    private Bitmap mBtnNormal;
-
-    private Bitmap mFrame;
-
-    private Bitmap mMask;
-
-    private RectF mSaveLayerRectF;
-
-    private PorterDuffXfermode mXfermode;
-
-    private float mFirstDownY; // 首次按下的Y
-
-    private float mFirstDownX; // 首次按下的X
-
-    private float mRealPos; // 图片的绘制位置
-
-    private float mBtnPos; // 按钮的位置
-
-    private float mBtnOnPos; // 开关打开的位置
-
-    private float mBtnOffPos; // 开关关闭的位置
-
-    private float mMaskWidth;
-
-    private float mMaskHeight;
-
-    private float mBtnWidth;
-
-    private float mBtnInitPos;
-
-    private int mClickTimeout;
-
-    private int mTouchSlop;
-
+    private final static float VELOCITY = 350;
+    private final static float EXTENDED_OFFSET_Y = 15;
     private final int MAX_ALPHA = 255;
-
+    private Paint mPaint;
+    private Bitmap mBottom;
+    private Bitmap mCurBtnPic;
+    private Bitmap mBtnPressed;
+    private Bitmap mBtnNormal;
+    private Bitmap mFrame;
+    private Bitmap mMask;
+    private RectF mSaveLayerRectF;
+    private PorterDuffXfermode mXfermode;
+    private float mFirstDownY; // 首次按下的Y
+    private float mFirstDownX; // 首次按下的X
+    private float mRealPos; // 图片的绘制位置
+    private float mBtnPos; // 按钮的位置
+    private float mBtnOnPos; // 开关打开的位置
+    private float mBtnOffPos; // 开关关闭的位置
+    private float mMaskWidth;
+    private float mMaskHeight;
+    private float mBtnWidth;
+    private float mBtnInitPos;
+    private int mClickTimeout;
+    private int mTouchSlop;
     private int mAlpha = MAX_ALPHA;
-
     private boolean mChecked = false;
-
     private boolean mBroadcasting;
-
     private boolean mTurningOn;
 
+    //    private OnCheckedChangeListener mOnCheckedChangeWidgetListener;
     private PerformClick mPerformClick;
-
     private OnCheckedChangeListener mOnCheckedChangeListener;
-
-//    private OnCheckedChangeListener mOnCheckedChangeWidgetListener;
-
     private boolean mAnimating;
-
-    private final static float VELOCITY = 350;
-
     private float mVelocity;
-
-    private final static float EXTENDED_OFFSET_Y = 15;
-
     private float mExtendOffsetY; // Y轴方向扩大的区域,增大点击区域
 
     private float mAnimationPosition;
@@ -155,25 +123,6 @@ public class SwitchButton extends CheckBox {
         return mChecked;
     }
 
-    public void toggle() {
-        setChecked(!mChecked);
-    }
-
-    /**
-     * 内部调用此方法设置checked状态，此方法会延迟执行各种回调函数，保证动画的流畅度
-     *
-     * @param checked 选中状态
-     */
-    private void setCheckedDelayed(final boolean checked) {
-        this.postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                setChecked(checked);
-            }
-        }, 10);
-    }
-
     /**
      * <p>
      * Changes the checked State of this button.
@@ -200,12 +149,31 @@ public class SwitchButton extends CheckBox {
             if (mOnCheckedChangeListener != null) {
                 mOnCheckedChangeListener.onCheckedChanged(SwitchButton.this, mChecked);
             }
-//            if (mOnCheckedChangeWidgetListener != null) {
-//                mOnCheckedChangeWidgetListener.onCheckedChanged(SwitchButton.this, mChecked);
-//            }
+            //            if (mOnCheckedChangeWidgetListener != null) {
+            //                mOnCheckedChangeWidgetListener.onCheckedChanged(SwitchButton.this, mChecked);
+            //            }
 
             mBroadcasting = false;
         }
+    }
+
+    public void toggle() {
+        setChecked(!mChecked);
+    }
+
+    /**
+     * 内部调用此方法设置checked状态，此方法会延迟执行各种回调函数，保证动画的流畅度
+     *
+     * @param checked 选中状态
+     */
+    private void setCheckedDelayed(final boolean checked) {
+        this.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                setChecked(checked);
+            }
+        }, 10);
     }
 
     /**
@@ -225,12 +193,13 @@ public class SwitchButton extends CheckBox {
      * @param listener the callback to call on checked State change
      * @hide
      */
-//    void setOnCheckedChangeWidgetListener(OnCheckedChangeListener listener) {
-//        mOnCheckedChangeWidgetListener = listener;
-//    }
+    //    void setOnCheckedChangeWidgetListener(OnCheckedChangeListener listener) {
+    //        mOnCheckedChangeWidgetListener = listener;
+    //    }
 
     /**
      * 触摸触发事件
+     *
      * @param event 触摸事件
      * @return 是否已处理
      */
@@ -279,12 +248,6 @@ public class SwitchButton extends CheckBox {
 
         invalidate();
         return isEnabled();
-    }
-
-    private final class PerformClick implements Runnable {
-        public void run() {
-            performClick();
-        }
     }
 
     @Override
@@ -351,18 +314,6 @@ public class SwitchButton extends CheckBox {
         mAnimating = false;
     }
 
-    private final class SwitchAnimation implements Runnable {
-
-        @Override
-        public void run() {
-            if (!mAnimating) {
-                return;
-            }
-            doAnimation();
-            FrameAnimationController.requestAnimationFrame(this);
-        }
-    }
-
     private void doAnimation() {
         mAnimationPosition += mAnimatedVelocity * FrameAnimationController.ANIMATION_FRAME_DURATION
                 / 1000;
@@ -382,5 +333,23 @@ public class SwitchButton extends CheckBox {
         mBtnPos = position;
         mRealPos = getRealPos(mBtnPos);
         invalidate();
+    }
+
+    private final class PerformClick implements Runnable {
+        public void run() {
+            performClick();
+        }
+    }
+
+    private final class SwitchAnimation implements Runnable {
+
+        @Override
+        public void run() {
+            if (!mAnimating) {
+                return;
+            }
+            doAnimation();
+            FrameAnimationController.requestAnimationFrame(this);
+        }
     }
 }

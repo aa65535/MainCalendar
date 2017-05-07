@@ -1,6 +1,7 @@
 package com.jjforever.wgj.maincalendar;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -13,7 +14,6 @@ import com.jjforever.wgj.maincalendar.Model.DailyRecord;
 import com.jjforever.wgj.maincalendar.dialogpicker.picker.DialogPicker;
 import com.jjforever.wgj.maincalendar.monthui.SwitchButton;
 import com.jjforever.wgj.maincalendar.toolbar.ToolBarActivity;
-import com.jjforever.wgj.maincalendar.util.Helper;
 import com.jjforever.wgj.maincalendar.util.LunarCalendar;
 import com.jjforever.wgj.maincalendar.weather.util.WeatherIconUtil;
 import com.jjforever.wgj.maincalendar.wheelpicker.picker.DatePicker;
@@ -46,7 +46,7 @@ public class AddDailyActivity extends ToolBarActivity {
         setContentView(R.layout.activity_add_daily);
 
         mRecord = getIntent().getParcelableExtra(AppConstants.MAIN_ACTIVITY_CLICK_DATE);
-        if (mRecord == null){
+        if (mRecord == null) {
             // 获取错误
             mSureQuit = true;
             finish();
@@ -66,16 +66,16 @@ public class AddDailyActivity extends ToolBarActivity {
         mSwitchButton = (SwitchButton) this.findViewById(R.id.switch_notice);
         mSwitchButton.setChecked(mRecord.getDisplay());
         RelativeLayout displayLayout = (RelativeLayout) this.findViewById(R.id.display_layout);
-        if (displayLayout != null){
+        if (displayLayout != null) {
             displayLayout.setOnClickListener(this);
         }
 
         mTitleEdit = (EditText) this.findViewById(R.id.text_record_title);
-        if (mTitleEdit != null && !Helper.isNullOrEmpty(mRecord.getTitle())) {
+        if (mTitleEdit != null && !TextUtils.isEmpty(mRecord.getTitle())) {
             mTitleEdit.setText(mRecord.getTitle());
         }
         mContentEdit = (EditText) this.findViewById(R.id.text_record_content);
-        if (mContentEdit != null && !Helper.isNullOrEmpty(mRecord.getContent())){
+        if (mContentEdit != null && !TextUtils.isEmpty(mRecord.getContent())) {
             mContentEdit.setText(mRecord.getContent());
         }
         if (!mRecord.getIsNew()) {
@@ -108,10 +108,10 @@ public class AddDailyActivity extends ToolBarActivity {
                         // 判断是否更改了时间
                         LunarCalendar tmpCalendar = mRecord.getRecordTime();
                         if (tmpCalendar.get(Calendar.YEAR) != year
-                            || tmpCalendar.get(Calendar.MONTH) != month
-                            || tmpCalendar.get(Calendar.DAY_OF_MONTH) != day
-                            || tmpCalendar.get(Calendar.HOUR_OF_DAY) != hour
-                            || tmpCalendar.get(Calendar.MINUTE) != minute) {
+                                || tmpCalendar.get(Calendar.MONTH) != month
+                                || tmpCalendar.get(Calendar.DAY_OF_MONTH) != day
+                                || tmpCalendar.get(Calendar.HOUR_OF_DAY) != hour
+                                || tmpCalendar.get(Calendar.MINUTE) != minute) {
                             mIsChanged = true;
                             tmpCalendar.set(Calendar.YEAR, year);
                             tmpCalendar.set(Calendar.MONTH, month);
@@ -129,9 +129,9 @@ public class AddDailyActivity extends ToolBarActivity {
                 // 选择天气
                 WeatherPicker weatherPicker = new WeatherPicker(this);
                 weatherPicker.setSelectedItem(this.mRecord.getWeather());
-                weatherPicker.setOnWeatherPickListener(new WeatherPicker.OnWeatherPickListener(){
+                weatherPicker.setOnWeatherPickListener(new WeatherPicker.OnWeatherPickListener() {
                     @Override
-                    public void onWeatherPicked(int code){
+                    public void onWeatherPicked(int code) {
                         if (mRecord.getWeather() != code) {
                             mIsChanged = true;
                             mRecord.setWeather(code);
@@ -149,30 +149,30 @@ public class AddDailyActivity extends ToolBarActivity {
 
     /**
      * 显示提示消息
+     *
      * @param msgId 提示消息字符串ID
      */
-    private void showToastMsg(int msgId){
+    private void showToastMsg(int msgId) {
         Toast.makeText(AddDailyActivity.this,
                 getResources().getString(msgId),
                 Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onOKButtonClick()
-    {
+    public void onOKButtonClick() {
         String title = mTitleEdit.getText().toString();
-        if (Helper.isNullOrEmpty(title)){
+        if (TextUtils.isEmpty(title)) {
             new DialogPicker(this, getResources().getString(R.string.must_input_title)).show();
             return;
         }
         String content = mContentEdit.getText().toString();
-        if (DailyRecordMng.isExist(title, mRecord.getIndex())){
+        if (DailyRecordMng.isExist(title, mRecord.getIndex())) {
             // 该标题已存在
             showToastMsg(R.string.existed_record);
             return;
         }
 
-        if (mRecord.getIsNew()){
+        if (mRecord.getIsNew()) {
             // 新建记录
             mRecord.setTitle(title);
             mRecord.setContent(content);
@@ -190,8 +190,7 @@ public class AddDailyActivity extends ToolBarActivity {
                 finish();
                 return;
             }
-        }
-        else{
+        } else {
             // 编辑记录
             mRecord.setTitle(title);
             mRecord.setContent(content);
@@ -212,8 +211,8 @@ public class AddDailyActivity extends ToolBarActivity {
     }
 
     @Override
-    public void onDeleteButtonClick(){
-        if (mRecord.getIsNew()){
+    public void onDeleteButtonClick() {
+        if (mRecord.getIsNew()) {
             return;
         }
         // 删除当前记录
@@ -228,8 +227,7 @@ public class AddDailyActivity extends ToolBarActivity {
                         setResult(AppConstants.RESULT_DELETE, null);
                         mSureQuit = true;
                         finish();
-                    }
-                    else{
+                    } else {
                         showToastMsg(R.string.delete_fail);
                     }
                 }
@@ -239,9 +237,8 @@ public class AddDailyActivity extends ToolBarActivity {
     }
 
     @Override
-    public void finish()
-    {
-        if (mSureQuit){
+    public void finish() {
+        if (mSureQuit) {
             super.finish();
             return;
         }
@@ -251,7 +248,7 @@ public class AddDailyActivity extends ToolBarActivity {
         boolean isChecked = mSwitchButton.isChecked();
         if (!title.equals(mRecord.getTitle())
                 || !content.equals(mRecord.getContent())
-                || isChecked != mRecord.getDisplay()){
+                || isChecked != mRecord.getDisplay()) {
             mIsChanged = true;
         }
 

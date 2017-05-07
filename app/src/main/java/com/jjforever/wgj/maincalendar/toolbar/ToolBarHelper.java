@@ -16,18 +16,6 @@ import com.jjforever.wgj.maincalendar.R;
  */
 class ToolBarHelper {
 
-    /*上下文，创建view的时候需要用到*/
-    private Context mContext;
-
-    /*base view*/
-    private FrameLayout mContentView;
-
-    /*mToolbar*/
-    private Toolbar mToolBar;
-
-    /*视图构造器*/
-    private LayoutInflater mInflater;
-
     /*
     * 两个属性
     * 1、toolbar是否悬浮在窗口之上
@@ -37,6 +25,14 @@ class ToolBarHelper {
             R.attr.windowActionBarOverlay,
             R.attr.actionBarSize
     };
+    /*上下文，创建view的时候需要用到*/
+    private Context mContext;
+    /*base view*/
+    private FrameLayout mContentView;
+    /*mToolbar*/
+    private Toolbar mToolBar;
+    /*视图构造器*/
+    private LayoutInflater mInflater;
 
     ToolBarHelper(Context context, int layoutId) {
         this.mContext = context;

@@ -25,12 +25,12 @@ public class DialogPicker extends ConfirmPopup<LinearLayout> {
 
     /**
      * 创建一个对话框
+     *
      * @param activity 活动
-     * @param title 标题
-     * @param content 内容
+     * @param title    标题
+     * @param content  内容
      */
-    public DialogPicker(Activity activity, String title, String content)
-    {
+    public DialogPicker(Activity activity, String title, String content) {
         super(activity);
         mTitle = title;
         mContent = content;
@@ -38,16 +38,17 @@ public class DialogPicker extends ConfirmPopup<LinearLayout> {
 
     /**
      * 创建一个对话框，标题为提醒字样
+     *
      * @param activity 活动
-     * @param content 内容
+     * @param content  内容
      */
-    public DialogPicker(Activity activity, String content)
-    {
+    public DialogPicker(Activity activity, String content) {
         this(activity, activity.getResources().getString(R.string.dialog_title), content);
     }
 
     /**
      * 设置监听事件
+     *
      * @param onDialogPickListener 回调方法
      */
     public void setOnDialogPickListener(OnDialogPickListener onDialogPickListener) {
@@ -62,8 +63,7 @@ public class DialogPicker extends ConfirmPopup<LinearLayout> {
     }
 
     @Override
-    protected void onCancel()
-    {
+    protected void onCancel() {
         if (onDialogPickListener != null) {
             onDialogPickListener.onDialogPicked(false);
         }
@@ -77,7 +77,7 @@ public class DialogPicker extends ConfirmPopup<LinearLayout> {
         rootLayout.setOrientation(LinearLayout.VERTICAL);
 
         mTextView = new TextView(activity);
-        mTextView.setHeight(screenHeightPixels/4);
+        mTextView.setHeight(screenHeightPixels / 4);
         mTextView.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
         mTextView.setGravity(Gravity.CENTER);
         mTextView.setTextSize(16);
@@ -95,6 +95,7 @@ public class DialogPicker extends ConfirmPopup<LinearLayout> {
     public interface OnDialogPickListener {
         /**
          * 对话框确认事件
+         *
          * @param confirm 是否确认
          */
         void onDialogPicked(boolean confirm);

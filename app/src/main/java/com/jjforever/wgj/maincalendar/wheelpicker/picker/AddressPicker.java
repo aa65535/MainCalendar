@@ -6,10 +6,10 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import java.util.ArrayList;
-
 import com.jjforever.wgj.maincalendar.common.util.LogUtils;
 import com.jjforever.wgj.maincalendar.wheelpicker.widget.WheelView;
+
+import java.util.ArrayList;
 
 /**
  * 地址选择器（包括省级、地级、县级）。

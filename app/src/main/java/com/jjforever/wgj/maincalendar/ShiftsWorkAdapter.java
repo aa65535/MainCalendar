@@ -44,14 +44,15 @@ public class ShiftsWorkAdapter extends BaseAdapter {
 
     /**
      * 删除指定位置的条目
+     *
      * @param position 指定的位置
      * @return 删除成功与否
      */
-    public boolean removeItem(int position){
-        if (list == null){
+    public boolean removeItem(int position) {
+        if (list == null) {
             return false;
         }
-        if (position < 0 || position >= list.size()){
+        if (position < 0 || position >= list.size()) {
             return false;
         }
 
@@ -60,12 +61,13 @@ public class ShiftsWorkAdapter extends BaseAdapter {
 
     /**
      * 在指定位置更新记录信息
+     *
      * @param position 指定位置
-     * @param record 记录信息
+     * @param record   记录信息
      * @return 是否成功
      */
-    public boolean setItem(int position, ShiftsWorkRecord record){
-        if (list == null){
+    public boolean setItem(int position, ShiftsWorkRecord record) {
+        if (list == null) {
             return false;
         }
 
@@ -105,7 +107,7 @@ public class ShiftsWorkAdapter extends BaseAdapter {
         params.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.txt_date_content);
         holder.line.setLayoutParams(params);
         holder.content.setText(String.format(Locale.getDefault(), "%s [周期%d天]",
-                                tmpRecord.getTitle(), tmpRecord.getPeriod()));
+                tmpRecord.getTitle(), tmpRecord.getPeriod()));
         return convertView;
     }
 

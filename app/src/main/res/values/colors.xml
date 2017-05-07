@@ -22,7 +22,8 @@
     <color name="dailyRecord">#fb5902</color>
     <color name="itemSelected">#4201fbb8</color>
     <color name="workDay">#4201fbb8</color>
-    <color name="workNight">#423701fb</color>
+    <color name="workNight">#420144fb</color>
+    <color name="restDay">#42ff00ee</color>
 
     <!-- 设置项配色 -->
     <color name="colorEditText">#cc333333</color>

@@ -6,16 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.jjforever.wgj.maincalendar.BLL.AlarmRecordMng;
 import com.jjforever.wgj.maincalendar.Model.AlarmRecord;
-import com.jjforever.wgj.maincalendar.monthui.SwitchButton;
 import com.jjforever.wgj.maincalendar.services.CalendarService;
 
 import java.util.List;
@@ -54,16 +51,16 @@ public class AlarmAdapter extends BaseAdapter {
      * @param position 指定的位置
      * @return 删除成功与否
      */
-//    public boolean removeItem(int position){
-//        if (list == null){
-//            return false;
-//        }
-//        if (position < 0 || position >= list.size()){
-//            return false;
-//        }
-//
-//        return list.remove(position) != null;
-//    }
+    //    public boolean removeItem(int position){
+    //        if (list == null){
+    //            return false;
+    //        }
+    //        if (position < 0 || position >= list.size()){
+    //            return false;
+    //        }
+    //
+    //        return list.remove(position) != null;
+    //    }
 
     /**
      * 在指定位置更新记录信息
@@ -71,16 +68,17 @@ public class AlarmAdapter extends BaseAdapter {
      * @param record 记录信息
      * @return 是否成功
      */
-//    public boolean setItem(int position, AlarmRecord record){
-//        if (list == null){
-//            return false;
-//        }
-//
-//        return list.set(position, record) != null;
-//    }
+    //    public boolean setItem(int position, AlarmRecord record){
+    //        if (list == null){
+    //            return false;
+    //        }
+    //
+    //        return list.set(position, record) != null;
+    //    }
 
     /**
      * 获取Item的索引
+     *
      * @param position 位置
      * @return 索引
      */
@@ -117,18 +115,17 @@ public class AlarmAdapter extends BaseAdapter {
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean isChecked = ((ToggleButton)v).isChecked();
-                if (isChecked != tmpRecord.getPause()){
+                boolean isChecked = ((ToggleButton) v).isChecked();
+                if (isChecked != tmpRecord.getPause()) {
                     return;
                 }
                 tmpRecord.setPause(!isChecked);
-                if (AlarmRecordMng.update(tmpRecord)){
+                if (AlarmRecordMng.update(tmpRecord)) {
                     context.startService(new Intent(context, CalendarService.class));
                     Toast.makeText(context,
                             tmpRecord.getOnlyTitle() + context.getResources().getString(isChecked ? R.string.no_pause : R.string.is_pause),
                             Toast.LENGTH_SHORT).show();
-                }
-                else{
+                } else {
                     tmpRecord.setPause(isChecked);
                 }
             }

@@ -46,32 +46,23 @@ class RecordAdapter extends BaseAdapter {
 
     /**
      * 删除指定位置的条目
+     *
      * @param position 指定的位置
      * @return 删除成功与否
      */
-    boolean removeItem(int position){
-        if (list == null){
-            return false;
-        }
-        if (position < 0 || position >= list.size()){
-            return false;
-        }
-
-        return list.remove(position) != null;
+    boolean removeItem(int position) {
+        return list != null && !(position < 0 || position >= list.size()) && list.remove(position) != null;
     }
 
     /**
      * 在指定位置更新记录信息
+     *
      * @param position 指定位置
-     * @param record 记录信息
+     * @param record   记录信息
      * @return 是否成功
      */
-    boolean setItem(int position, ICalendarRecord record){
-        if (list == null){
-            return false;
-        }
-
-        return list.set(position, record) != null;
+    boolean setItem(int position, ICalendarRecord record) {
+        return list != null && list.set(position, record) != null;
     }
 
     @Override

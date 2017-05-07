@@ -40,24 +40,24 @@ public class DailyRecordList extends ToolBarActivity {
     /**
      * 设置界面控件
      */
-    private void setView(){
+    private void setView() {
         mListView = (ListView) findViewById(R.id.record_list);
-        if (mListView != null){
+        if (mListView != null) {
             // 点击事件
             mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (mRecordAdapter == null || mMultiSelected){
+                    if (mRecordAdapter == null || mMultiSelected) {
                         return;
                     }
 
                     Object selItem = mRecordAdapter.getItem(position);
-                    if (selItem == null){
+                    if (selItem == null) {
                         return;
                     }
 
                     mEditPosition = position;
-                    startEditDaily((DailyRecord)selItem);
+                    startEditDaily((DailyRecord) selItem);
                 }
             });
             // 长按进入多选模式
@@ -78,7 +78,7 @@ public class DailyRecordList extends ToolBarActivity {
     /**
      * 载入所有记录
      */
-    private void loadAllRecord(){
+    private void loadAllRecord() {
         ArrayList<DailyRecord> selectLst = DailyRecordMng.selectAll();
         ArrayList<ICalendarRecord> tmpLst = new ArrayList<>();
         tmpLst.addAll(selectLst);
@@ -91,9 +91,10 @@ public class DailyRecordList extends ToolBarActivity {
 
     /**
      * 编辑日程
+     *
      * @param record 要编辑的记录
      */
-    private void startEditDaily(DailyRecord record){
+    private void startEditDaily(DailyRecord record) {
         Intent intent = new Intent(this, AddDailyActivity.class);
         Bundle mBundle = new Bundle();
         mBundle.putParcelable(AppConstants.MAIN_ACTIVITY_CLICK_DATE, record);
@@ -105,19 +106,18 @@ public class DailyRecordList extends ToolBarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (mEditPosition < 0){
+        if (mEditPosition < 0) {
             return;
         }
-        if(resultCode == RESULT_OK){
+        if (resultCode == RESULT_OK) {
             // 编辑
             Object selItem = mRecordAdapter.getItem(mEditPosition);
-            if (selItem == null){
+            if (selItem == null) {
                 return;
             }
-            mRecordAdapter.setItem(mEditPosition, DailyRecordMng.select(((DailyRecord)selItem).getIndex()));
+            mRecordAdapter.setItem(mEditPosition, DailyRecordMng.select(((DailyRecord) selItem).getIndex()));
             mListView.setAdapter(mRecordAdapter);
-        }
-        else if (resultCode == AppConstants.RESULT_DELETE){
+        } else if (resultCode == AppConstants.RESULT_DELETE) {
             // 删除
             mRecordAdapter.removeItem(mEditPosition);
             mListView.setAdapter(mRecordAdapter);
@@ -125,13 +125,12 @@ public class DailyRecordList extends ToolBarActivity {
     }
 
     @Override
-    public void onOKButtonClick()
-    {
-        if (!mMultiSelected){
+    public void onOKButtonClick() {
+        if (!mMultiSelected) {
             return;
         }
 
-        if (mListView.getCheckedItemCount() <= 0){
+        if (mListView.getCheckedItemCount() <= 0) {
             Toast.makeText(this,
                     getResources().getString(R.string.please_select_delete_item),
                     Toast.LENGTH_SHORT).show();
@@ -146,12 +145,12 @@ public class DailyRecordList extends ToolBarActivity {
                     long[] checkedIds = mListView.getCheckedItemIds();
                     ArrayList<Long> indexList = new ArrayList<>(checkedIds.length);
                     for (long tmpId : checkedIds) {
-                        DailyRecord tmpRecord = (DailyRecord)mRecordAdapter.getItem((int)tmpId);
-                        if (tmpRecord != null){
+                        DailyRecord tmpRecord = (DailyRecord) mRecordAdapter.getItem((int) tmpId);
+                        if (tmpRecord != null) {
                             indexList.add(tmpRecord.getIndex());
                         }
                     }
-                    if (DailyRecordMng.delete(indexList)){
+                    if (DailyRecordMng.delete(indexList)) {
                         Toast.makeText(DailyRecordList.this,
                                 getResources().getString(R.string.delete_success),
                                 Toast.LENGTH_SHORT).show();
@@ -159,12 +158,11 @@ public class DailyRecordList extends ToolBarActivity {
                         showOkBtn(false);
                         mListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
                         // 删除条目
-                        for (int i = checkedIds.length - 1; i >= 0; i--){
-                            mRecordAdapter.removeItem((int)checkedIds[i]);
+                        for (int i = checkedIds.length - 1; i >= 0; i--) {
+                            mRecordAdapter.removeItem((int) checkedIds[i]);
                         }
                         mListView.setAdapter(mRecordAdapter);
-                    }
-                    else{
+                    } else {
                         Toast.makeText(DailyRecordList.this,
                                 getResources().getString(R.string.delete_fail),
                                 Toast.LENGTH_SHORT).show();
@@ -176,9 +174,8 @@ public class DailyRecordList extends ToolBarActivity {
     }
 
     @Override
-    public void finish()
-    {
-        if (mMultiSelected && mListView.getCheckedItemCount() > 0){
+    public void finish() {
+        if (mMultiSelected && mListView.getCheckedItemCount() > 0) {
             // 在多选模式返回键则退出多选
             mMultiSelected = false;
             showOkBtn(false);
@@ -188,6 +185,6 @@ public class DailyRecordList extends ToolBarActivity {
         }
         setResult(RESULT_OK, null);
         super.finish();
-        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

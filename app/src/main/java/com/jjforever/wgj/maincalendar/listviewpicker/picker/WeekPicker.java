@@ -10,8 +10,6 @@ import android.widget.ListView;
 import com.jjforever.wgj.maincalendar.R;
 import com.jjforever.wgj.maincalendar.common.popup.ConfirmPopup;
 
-import java.util.ArrayList;
-
 /**
  * Created by Wgj on 2016/9/17.
  * 星期选择器
@@ -29,11 +27,11 @@ public class WeekPicker extends ConfirmPopup<LinearLayout> {
 
     /**
      * 创建一个对话框
+     *
      * @param activity 活动
-     * @param title 标题
+     * @param title    标题
      */
-    public WeekPicker(Activity activity, String title)
-    {
+    public WeekPicker(Activity activity, String title) {
         super(activity);
         mWeekAdapter = new WeekAdapter(activity);
         mTitle = title;
@@ -41,23 +39,23 @@ public class WeekPicker extends ConfirmPopup<LinearLayout> {
 
     /**
      * 创建一个对话框，标题为提醒字样
+     *
      * @param activity 活动
      */
-    public WeekPicker(Activity activity)
-    {
+    public WeekPicker(Activity activity) {
         this(activity, activity.getResources().getString(R.string.please_chose_week));
     }
 
     /**
      * 设置选中的星期
+     *
      * @param items 选中的星期
      */
-    public void setCheckedItems(int items){
-        for (int i = 0; i < mWeekAdapter.getCount(); i++){
-            if ((items & (1 << i)) != 0){
+    public void setCheckedItems(int items) {
+        for (int i = 0; i < mWeekAdapter.getCount(); i++) {
+            if ((items & (1 << i)) != 0) {
                 mWeekAdapter.setIsSelected(i, true);
-            }
-            else{
+            } else {
                 mWeekAdapter.setIsSelected(i, false);
             }
         }
@@ -65,6 +63,7 @@ public class WeekPicker extends ConfirmPopup<LinearLayout> {
 
     /**
      * 设置监听事件
+     *
      * @param onWeekPickListener 回调方法
      */
     public void setOnWeekPickListener(OnWeekPickListener onWeekPickListener) {
@@ -75,8 +74,8 @@ public class WeekPicker extends ConfirmPopup<LinearLayout> {
     protected void onSubmit() {
         if (onWeekPickListener != null) {
             int tmpDay = 0;
-            for (int i = 0; i < mWeekAdapter.getCount(); i++){
-                if (mWeekAdapter.getIsSelected(i)){
+            for (int i = 0; i < mWeekAdapter.getCount(); i++) {
+                if (mWeekAdapter.getIsSelected(i)) {
                     tmpDay |= (1 << i);
                 }
             }
@@ -93,7 +92,7 @@ public class WeekPicker extends ConfirmPopup<LinearLayout> {
 
         mListView = new ListView(activity);
         mListView.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
-        mListView.getLayoutParams().height = screenHeightPixels/4;
+        mListView.getLayoutParams().height = screenHeightPixels / 4;
         mListView.setPadding(30, 10, 30, 10);
         // 去掉分割线
         mListView.setDividerHeight(0);
@@ -122,6 +121,7 @@ public class WeekPicker extends ConfirmPopup<LinearLayout> {
     public interface OnWeekPickListener {
         /**
          * 星期选择框确认事件
+         *
          * @param selected 选中的星期
          */
         void onWeekPicked(int selected);

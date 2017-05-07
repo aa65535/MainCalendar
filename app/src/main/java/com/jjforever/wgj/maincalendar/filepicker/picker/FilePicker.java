@@ -65,11 +65,12 @@ public class FilePicker extends ConfirmPopup<LinearLayout> implements AdapterVie
     private String mSelectedFile = "";
     // 之前选中的项
     private View mOldView;
-
-    @IntDef(value = {DIRECTORY, FILE})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Mode {
-    }
+    private MediaPlayer.OnPreparedListener preparedListener = new MediaPlayer.OnPreparedListener() {
+        @Override
+        public void onPrepared(MediaPlayer mp) {
+            mp.start();
+        }
+    };
 
     /**
      * Instantiates a new File picker.
@@ -86,8 +87,7 @@ public class FilePicker extends ConfirmPopup<LinearLayout> implements AdapterVie
         if (activity.getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
             // 竖屏设置为一半，横屏全屏
             setHalfScreen(true);
-        }
-        else{
+        } else {
             setFillScreen(true);
         }
         this.initPath = StorageUtils.getRootPath(activity);
@@ -159,7 +159,7 @@ public class FilePicker extends ConfirmPopup<LinearLayout> implements AdapterVie
     /**
      * 设置只显示铃声文件
      */
-    public void setRingExtensions(){
+    public void setRingExtensions() {
         adapter.setAllowExtensions(MusicSuffix);
     }
 
@@ -227,7 +227,7 @@ public class FilePicker extends ConfirmPopup<LinearLayout> implements AdapterVie
         FileItem fileItem = adapter.getItem(position);
         stopPlayMusic();
         mSelectedFile = "";
-        if (mOldView != null){
+        if (mOldView != null) {
             mOldView.setBackgroundColor(Color.WHITE);
             mOldView = null;
         }
@@ -244,7 +244,7 @@ public class FilePicker extends ConfirmPopup<LinearLayout> implements AdapterVie
                 LogUtils.debug("已选择文件：" + clickPath);
                 mSelectedFile = clickPath;
                 String extension = FileUtils.getExtension(clickPath);
-                if (ConvertUtils.toString(MusicSuffix).contains(extension)){
+                if (ConvertUtils.toString(MusicSuffix).contains(extension)) {
                     // 是支持的音乐文件则进行播放
                     startPlayMusic(clickPath);
                 }
@@ -255,7 +255,7 @@ public class FilePicker extends ConfirmPopup<LinearLayout> implements AdapterVie
     /**
      * 停止播放音乐
      */
-    private void stopPlayMusic(){
+    private void stopPlayMusic() {
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
             mMediaPlayer = null;
@@ -264,26 +264,20 @@ public class FilePicker extends ConfirmPopup<LinearLayout> implements AdapterVie
 
     /**
      * 开始播放音乐
+     *
      * @param path 音乐绝对路径
      */
-    private void startPlayMusic(String path){
+    private void startPlayMusic(String path) {
         try {
             mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.setOnPreparedListener(preparedListener);
             mMediaPlayer.setDataSource(path);
             mMediaPlayer.prepareAsync();
-        }catch (Exception e) {
+        } catch (Exception e) {
             LogUtils.error(e.toString());
         }
     }
-
-    private MediaPlayer.OnPreparedListener preparedListener = new MediaPlayer.OnPreparedListener() {
-        @Override
-        public void onPrepared(MediaPlayer mp) {
-            mp.start();
-        }
-    };
 
     private void refreshCurrentDirPath(String currentPath) {
         if (currentPath.equals("/")) {
@@ -301,6 +295,11 @@ public class FilePicker extends ConfirmPopup<LinearLayout> implements AdapterVie
      */
     public void setOnFilePickListener(OnFilePickListener listener) {
         this.onFilePickListener = listener;
+    }
+
+    @IntDef(value = {DIRECTORY, FILE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Mode {
     }
 
     /**

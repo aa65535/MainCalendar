@@ -21,9 +21,9 @@ public class GradientShaderTextView extends TextView {
     private float mTextWidth = 0;
 
     private int delta = 15;
-    public GradientShaderTextView(Context ctx)
-    {
-        this(ctx,null);
+
+    public GradientShaderTextView(Context ctx) {
+        this(ctx, null);
     }
 
     public GradientShaderTextView(Context context, AttributeSet attrs) {
@@ -39,11 +39,11 @@ public class GradientShaderTextView extends TextView {
                 Paint paint = getPaint();
                 String text = getText().toString();
                 mTextWidth = paint.measureText(text);
-                int size = (int)paint.measureText(text);
+                int size = (int) paint.measureText(text);
                 int startX = (mViewWidth - size) / 2;
                 mLinearGradient = new LinearGradient(startX + 1, 0, 0, 0,
-                        new int[] { 0x90ffffff, 0xffffffff, 0x90ffffff },
-                        new float[] { 0, 0.5f, 1 }, Shader.TileMode.CLAMP); //边缘融合
+                        new int[]{0x90ffffff, 0xffffffff, 0x90ffffff},
+                        new float[]{0, 0.5f, 1}, Shader.TileMode.CLAMP); //边缘融合
                 paint.setShader(mLinearGradient);
                 mGradientMatrix = new Matrix();
             }

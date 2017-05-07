@@ -1,8 +1,8 @@
 package com.jjforever.wgj.maincalendar;
 
 import android.app.Activity;
-import android.app.NotificationManager;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +14,7 @@ import android.os.PowerManager;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.v7.app.NotificationCompat;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,7 +26,6 @@ import android.widget.TextView;
 import com.jjforever.wgj.maincalendar.BLL.GlobalSettingMng;
 import com.jjforever.wgj.maincalendar.Model.AlarmRecord;
 import com.jjforever.wgj.maincalendar.common.util.LogUtils;
-import com.jjforever.wgj.maincalendar.util.Helper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -60,6 +60,26 @@ public class AlarmNoticeActivity extends Activity {
 
     // 解锁手机
     private PowerManager.WakeLock mWakeLock;
+    private AudioManager.OnAudioFocusChangeListener mAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+        public void onAudioFocusChange(int paramAnonymousInt) {
+            switch (paramAnonymousInt) {
+                case AudioManager.AUDIOFOCUS_LOSS:
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                    stopPlayMusic();
+
+                default:
+                    break;
+            }
+        }
+    };
+    private MediaPlayer.OnPreparedListener preparedListener = new MediaPlayer.OnPreparedListener() {
+        @Override
+        public void onPrepared(MediaPlayer mp) {
+            if (mMediaPlayer != null) {
+                mMediaPlayer.start();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +92,7 @@ public class AlarmNoticeActivity extends Activity {
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
         final ArrayList<AlarmRecord> mAlarmRecords = getIntent().getParcelableArrayListExtra(AppConstants.SERVICE_CALL_ACTIVITY);
-        if (mAlarmRecords == null){
+        if (mAlarmRecords == null) {
             // 获取错误
             ForceFinished();
             return;
@@ -86,34 +106,29 @@ public class AlarmNoticeActivity extends Activity {
         mTipView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction())
-                {
-                    case MotionEvent.ACTION_DOWN:
-                    {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
                         mCurrentX = (int) event.getRawX();
                         mStartX = mCurrentX;
                         break;
                     }
-                    case MotionEvent.ACTION_MOVE:
-                    {
+                    case MotionEvent.ACTION_MOVE: {
                         int tmpX = (int) event.getRawX();
-                        mTipView.scrollBy(mCurrentX - tmpX , 0);
+                        mTipView.scrollBy(mCurrentX - tmpX, 0);
                         mCurrentX = tmpX;
                         break;
                     }
-                    case MotionEvent.ACTION_UP:
-                    {
+                    case MotionEvent.ACTION_UP: {
                         int endX = (int) event.getRawX();
-                        if (Math.abs(endX - mStartX) > tmpWidth){
+                        if (Math.abs(endX - mStartX) > tmpWidth) {
                             if (GlobalSettingMng.getSetting().getIsNotification()) {
                                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                                 for (AlarmRecord tmpRecord : mAlarmRecords) {
-                                    mNotificationManager.cancel((int)tmpRecord.getIndex());
+                                    mNotificationManager.cancel((int) tmpRecord.getIndex());
                                 }
                             }
                             ForceFinished();
-                        }
-                        else{
+                        } else {
                             mTipView.scrollBy(mCurrentX - mStartX, 0);
                             mCurrentX = mStartX;
                         }
@@ -137,7 +152,7 @@ public class AlarmNoticeActivity extends Activity {
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             for (AlarmRecord tmpRecord : mAlarmRecords) {
                 String tmpStr = tmpRecord.getContent();
-                if (Helper.isNullOrEmpty(tmpStr)) {
+                if (TextUtils.isEmpty(tmpStr)) {
                     tmpStr = tmpRecord.toString();
                 }
                 Notification mNotification = new NotificationCompat.Builder(this)
@@ -168,31 +183,32 @@ public class AlarmNoticeActivity extends Activity {
     /**
      * 强制退出
      */
-    private void ForceFinished(){
+    private void ForceFinished() {
         this.mForceFinished = true;
         finish();
     }
 
     /**
      * 状态栏点击记录进入编辑记录状态
+     *
      * @param record 要查看的闹钟记录
      */
-    private PendingIntent startEditAlarm(AlarmRecord record){
+    private PendingIntent startEditAlarm(AlarmRecord record) {
         Intent intent = new Intent(this, AddAlarmActivity.class);
         Bundle mBundle = new Bundle();
         mBundle.putParcelable(AppConstants.MAIN_ACTIVITY_CLICK_DATE, record);
         intent.putExtras(mBundle);
-        return PendingIntent.getActivity(this, (int)record.getIndex(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getActivity(this, (int) record.getIndex(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     /**
      * 开始进行闹钟响铃动作
      */
-    private void StartAlarming(){
+    private void StartAlarming() {
         if (mTimer != null) {
             return;
         }
-        mVibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+        mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         if (mVibrator != null && mVibrator.hasVibrator()) {
             long[] pattern = {700, 1000, 700, 1000};   // 停止 开启 停止 开启
             //重复两次上面的pattern 如果只想震动一次，index设为-1
@@ -214,13 +230,13 @@ public class AlarmNoticeActivity extends Activity {
         }
 
         String ringPath = GlobalSettingMng.getSetting().getRingPath();
-        if (!Helper.isNullOrEmpty(ringPath)) {
+        if (!TextUtils.isEmpty(ringPath)) {
             startPlayMusic(ringPath);
         }
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         AppConstants.DLog("on resume...");
         StartAlarming();
@@ -229,7 +245,7 @@ public class AlarmNoticeActivity extends Activity {
     /**
      * 停止播放音乐
      */
-    private void stopPlayMusic(){
+    private void stopPlayMusic() {
         if (mMediaPlayer != null) {
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.stop();
@@ -246,14 +262,15 @@ public class AlarmNoticeActivity extends Activity {
 
     /**
      * 开始播放音乐
+     *
      * @param path 音乐绝对路径
      */
-    private void startPlayMusic(String path){
+    private void startPlayMusic(String path) {
         try {
             // 先停止如果可以的话
             stopPlayMusic();
             File tmpFile = new File(path);
-            if (!tmpFile.exists()){
+            if (!tmpFile.exists()) {
                 return;
             }
 
@@ -280,35 +297,14 @@ public class AlarmNoticeActivity extends Activity {
                 mMediaPlayer.setLooping(true);
                 mMediaPlayer.prepareAsync();
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             LogUtils.error(e.toString());
         }
     }
 
-    private AudioManager.OnAudioFocusChangeListener mAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
-        public void onAudioFocusChange(int paramAnonymousInt) {
-            switch (paramAnonymousInt) {
-                case AudioManager.AUDIOFOCUS_LOSS:
-                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-                    stopPlayMusic();
-
-                default:
-                    break;
-            }
-        }
-    };
-
-    private MediaPlayer.OnPreparedListener preparedListener = new MediaPlayer.OnPreparedListener() {
-        @Override
-        public void onPrepared(MediaPlayer mp) {
-            if (mMediaPlayer != null) {
-                mMediaPlayer.start();
-            }
-        }
-    };
-
     /**
      * 屏蔽按键 然而并没什么用。。。
+     *
      * @param keyEvent 按键事件
      * @return 是否已经处理过按键
      */
@@ -330,7 +326,7 @@ public class AlarmNoticeActivity extends Activity {
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         AppConstants.DLog("Enter in pause...");
         if (!mForceFinished) {
@@ -342,8 +338,7 @@ public class AlarmNoticeActivity extends Activity {
             if (curTime - mOldTime < 1500) {
                 // 2S内的数据算无效
                 mOldTime = curTime;
-            }
-            else{
+            } else {
                 this.ForceFinished();
             }
             return;
@@ -377,15 +372,15 @@ public class AlarmNoticeActivity extends Activity {
     }
 
     @Override
-    public void finish(){
+    public void finish() {
         super.finish();
 
         releaseCpuLock();
         stopPlayMusic();
-        if (mVibrator != null){
+        if (mVibrator != null) {
             mVibrator.cancel();
         }
-        if (mTimer != null){
+        if (mTimer != null) {
             mTimer.cancel();
             mTimer = null;
         }

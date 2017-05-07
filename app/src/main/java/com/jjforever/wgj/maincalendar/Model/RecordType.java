@@ -10,7 +10,7 @@ public final class RecordType {
     // 农历节日
     public static int LUNAR_HOLIDAY = 2;
     // 节气
-//    public static int SOLAR_TERM = 3;
+    //    public static int SOLAR_TERM = 3;
     // 日常记录
     public static int DAILY_RECORD = 7;
     // 闹钟记录

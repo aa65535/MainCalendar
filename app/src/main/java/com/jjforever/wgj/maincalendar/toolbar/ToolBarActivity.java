@@ -48,7 +48,7 @@ public abstract class ToolBarActivity extends AppCompatActivity implements View.
     @Override
     public void setContentView(int layoutResID) {
         int statusHeight = Helper.getStatusHeight(this);
-        ToolBarHelper mToolBarHelper = new ToolBarHelper(this,layoutResID);
+        ToolBarHelper mToolBarHelper = new ToolBarHelper(this, layoutResID);
         mToolbar = mToolBarHelper.getToolBar();
         mToolbar.getLayoutParams().height += statusHeight;
         mToolbar.setPadding(mToolbar.getPaddingLeft(), statusHeight, mToolbar.getPaddingRight(), mToolbar.getPaddingBottom());
@@ -60,28 +60,28 @@ public abstract class ToolBarActivity extends AppCompatActivity implements View.
         onCreateCustomToolBar(mToolbar);
         mTitleView = (TextView) this.findViewById(R.id.toolbar_title);
         mOkView = (ImageView) this.findViewById(R.id.toolbar_ok_btn);
-        if (mOkView != null){
+        if (mOkView != null) {
             mOkView.getLayoutParams().height = mOkView.getLayoutParams().width / 3;
             mOkView.setOnClickListener(this);
         }
         mDeleteView = (ImageView) this.findViewById(R.id.toolbar_delete_btn);
-        if (mDeleteView != null){
+        if (mDeleteView != null) {
             mDeleteView.getLayoutParams().height = mDeleteView.getLayoutParams().width / 3;
             mDeleteView.setOnClickListener(this);
         }
     }
 
-    public void onCreateCustomToolBar(Toolbar toolbar){
-        toolbar.setContentInsetsRelative(0,0);
+    public void onCreateCustomToolBar(Toolbar toolbar) {
+        toolbar.setContentInsetsRelative(0, 0);
         getLayoutInflater().inflate(R.layout.toolbar_button, toolbar);
     }
 
     /**
      * 设置标题
+     *
      * @param title 标题字符串
      */
-    public void setTitle(CharSequence title)
-    {
+    public void setTitle(CharSequence title) {
         //this.mTitle = title;
         if (mTitleView != null) {
             mTitleView.setText(title);
@@ -90,15 +90,16 @@ public abstract class ToolBarActivity extends AppCompatActivity implements View.
 
     /**
      * 设置工具栏背景色
+     *
      * @param color 背景色
      */
-    public void setToolbarBack(int color){
+    public void setToolbarBack(int color) {
         mToolbar.setBackgroundColor(color);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
         }
@@ -107,30 +108,33 @@ public abstract class ToolBarActivity extends AppCompatActivity implements View.
 
     /**
      * 显示或者隐藏确定按钮
+     *
      * @param show 是否显示
      */
-    protected void showOkBtn(boolean show){
-        if (mOkView != null){
+    protected void showOkBtn(boolean show) {
+        if (mOkView != null) {
             mOkView.setVisibility(show ? View.VISIBLE : View.GONE);
         }
     }
 
     /**
      * 显示或隐藏删除按钮
+     *
      * @param show 是否显示
      */
-    protected void showDeleteBtn(boolean show){
-        if (mDeleteView != null){
+    protected void showDeleteBtn(boolean show) {
+        if (mDeleteView != null) {
             mDeleteView.setVisibility(show ? View.VISIBLE : View.GONE);
         }
     }
 
     /**
      * 设置OK按钮图标
+     *
      * @param resId 要设置的按钮图标资源
      */
-    protected void setOkBtnImage(int resId){
-        if (mOkView != null){
+    protected void setOkBtnImage(int resId) {
+        if (mOkView != null) {
             mOkView.setImageResource(resId);
         }
     }
@@ -156,21 +160,20 @@ public abstract class ToolBarActivity extends AppCompatActivity implements View.
     /**
      * 按下确定按钮触发事件，需在子类中重写
      */
-    public void onOKButtonClick(){
+    public void onOKButtonClick() {
 
     }
 
     /**
      * 按下删除按钮触发事件，需在子类中重写
      */
-    public void onDeleteButtonClick(){
+    public void onDeleteButtonClick() {
 
     }
 
     @Override
-    public void finish()
-    {
+    public void finish() {
         super.finish();
-        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

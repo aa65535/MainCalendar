@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.jjforever.wgj.maincalendar.util.LunarCalendar;
+
 import java.util.Calendar;
 
 /**
@@ -12,6 +13,17 @@ import java.util.Calendar;
  */
 public class DailyRecord implements ICalendarRecord, Parcelable {
 
+    public static final Parcelable.Creator<DailyRecord> CREATOR = new Parcelable.Creator<DailyRecord>() {
+        @Override
+        public DailyRecord createFromParcel(Parcel source) {
+            return new DailyRecord(source);
+        }
+
+        @Override
+        public DailyRecord[] newArray(int size) {
+            return new DailyRecord[size];
+        }
+    };
     // 记录索引
     private long mIndex = 0;
     // 记录的日期
@@ -38,93 +50,108 @@ public class DailyRecord implements ICalendarRecord, Parcelable {
 
     /**
      * 创建一条记录
+     *
      * @param isNew 是否为新记录
      */
-    public DailyRecord(boolean isNew){
+    public DailyRecord(boolean isNew) {
         mIsNew = isNew;
+    }
+
+    protected DailyRecord(Parcel in) {
+        this.mIndex = in.readLong();
+        this.mRecordTime = (LunarCalendar) in.readSerializable();
+        this.mWeather = in.readInt();
+        this.mTitle = in.readString();
+        this.mContent = in.readString();
+        this.mDisplay = in.readByte() != 0;
+        this.mCreateTime = (Calendar) in.readSerializable();
+        this.mIsNew = in.readByte() != 0;
     }
 
     /**
      * 获取日常记录类型
+     *
      * @return 日常记录类型 RecordType.DAILY_RECORD
      */
-    public int getType(){
+    public int getType() {
         return RecordType.DAILY_RECORD;
     }
 
     /**
      * 显示方式
+     *
      * @return RecordShowType类型
      */
-    public int showType(){
+    public int showType() {
         return mDisplay ? RecordShowType.TEXT_DOT : RecordShowType.HIDE;
     }
 
-    public long getIndex(){
+    public long getIndex() {
         return mIndex;
     }
 
-    public void setIndex(long index){
+    public void setIndex(long index) {
         mIndex = index;
     }
 
     /**
      * 获取记录的日期
+     *
      * @return 记录的日期
      */
-    public LunarCalendar getRecordTime(){
+    public LunarCalendar getRecordTime() {
         return mRecordTime;
     }
 
-    public void setRecordTime(LunarCalendar calendar){
+    public void setRecordTime(LunarCalendar calendar) {
         mRecordTime = calendar;
     }
 
-    public int getWeather(){
+    public int getWeather() {
         return mWeather;
     }
 
-    public void setWeather(int weather){
+    public void setWeather(int weather) {
         mWeather = weather;
     }
 
-    public String getTitle(){
+    public String getTitle() {
         return mTitle;
     }
 
-    public void setTitle(String title){
+    public void setTitle(String title) {
         mTitle = title;
     }
 
-    public String getContent(){
+    public String getContent() {
         return mContent;
     }
 
-    public void setContent(String content){
+    public void setContent(String content) {
         mContent = content;
     }
 
-    public boolean getDisplay(){
-        return  mDisplay;
+    public boolean getDisplay() {
+        return mDisplay;
     }
 
-    public void setDisplay(boolean display){
+    public void setDisplay(boolean display) {
         mDisplay = display;
     }
 
-    public Calendar getCreateTime(){
+    public Calendar getCreateTime() {
         return mCreateTime;
     }
 
-    public void setCreateTime(Calendar calendar){
+    public void setCreateTime(Calendar calendar) {
         mCreateTime = calendar;
     }
 
-    public boolean getIsNew(){
-        return  mIsNew;
+    public boolean getIsNew() {
+        return mIsNew;
     }
 
-    public void setIsNew(boolean isNew){
+    public void setIsNew(boolean isNew) {
         mIsNew = isNew;
     }
 
@@ -144,27 +171,4 @@ public class DailyRecord implements ICalendarRecord, Parcelable {
         dest.writeSerializable(this.mCreateTime);
         dest.writeByte(this.mIsNew ? (byte) 1 : (byte) 0);
     }
-
-    protected DailyRecord(Parcel in) {
-        this.mIndex = in.readLong();
-        this.mRecordTime = (LunarCalendar) in.readSerializable();
-        this.mWeather = in.readInt();
-        this.mTitle = in.readString();
-        this.mContent = in.readString();
-        this.mDisplay = in.readByte() != 0;
-        this.mCreateTime = (Calendar) in.readSerializable();
-        this.mIsNew = in.readByte() != 0;
-    }
-
-    public static final Parcelable.Creator<DailyRecord> CREATOR = new Parcelable.Creator<DailyRecord>() {
-        @Override
-        public DailyRecord createFromParcel(Parcel source) {
-            return new DailyRecord(source);
-        }
-
-        @Override
-        public DailyRecord[] newArray(int size) {
-            return new DailyRecord[size];
-        }
-    };
 }

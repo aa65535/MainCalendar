@@ -4,11 +4,11 @@ import android.os.Debug;
 import android.os.Environment;
 import android.util.Log;
 
+import com.jjforever.wgj.maincalendar.common.AppConfig;
+
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
-import com.jjforever.wgj.maincalendar.common.AppConfig;
 
 /**
  * 如果用于android平台，将信息记录到“LogCat”。如果用于java平台，将信息记录到“Console”

@@ -10,20 +10,21 @@ public class LunarHoliday implements ICalendarRecord {
     // 节日标题
     private String mTitle;
 
-    public LunarHoliday(String title){
+    public LunarHoliday(String title) {
         mTitle = title;
     }
 
-    public int getType(){
+    public int getType() {
         return RecordType.LUNAR_HOLIDAY;
     }
 
-    public String getTitle(){
+    public String getTitle() {
         return mTitle;
     }
 
     /**
      * 显示方式
+     *
      * @return RecordShowType.TEXT
      */
     public int showType() {
@@ -32,9 +33,10 @@ public class LunarHoliday implements ICalendarRecord {
 
     /**
      * 该类是不包含记录时间的
+     *
      * @return null
      */
-    public LunarCalendar getRecordTime(){
+    public LunarCalendar getRecordTime() {
         return null;
     }
 }

@@ -10,46 +10,65 @@ import java.util.Locale;
  * 报警用的时间类
  */
 public class AlarmTime implements Parcelable {
+    public static final Parcelable.Creator<AlarmTime> CREATOR = new Parcelable.Creator<AlarmTime>() {
+        @Override
+        public AlarmTime createFromParcel(Parcel source) {
+            return new AlarmTime(source);
+        }
+
+        @Override
+        public AlarmTime[] newArray(int size) {
+            return new AlarmTime[size];
+        }
+    };
     // 小时
     public int Hour;
     // 分钟
     public int Minute;
 
-    public AlarmTime(int hour, int minute){
+    public AlarmTime(int hour, int minute) {
         this.Hour = hour;
         this.Minute = minute;
     }
 
     /**
      * 根据时间分钟数创建对象 time=小时*60 + 分钟
+     *
      * @param time 设置的时间分钟数
      */
-    AlarmTime(int time){
+    AlarmTime(int time) {
         setTime(time);
     }
 
-    public void setTime(int time){
-        this.Hour = time/60;
-        this.Minute = time%60;
+    protected AlarmTime(Parcel in) {
+        this.Hour = in.readInt();
+        this.Minute = in.readInt();
     }
 
     /**
      * 获取时间分钟总数
+     *
      * @return 分钟总数
      */
-    public int getTime(){
+    public int getTime() {
         return (this.Hour * 60 + this.Minute);
+    }
+
+    public void setTime(int time) {
+        this.Hour = time / 60;
+        this.Minute = time % 60;
     }
 
     /**
      * 比较时间
-     * @param hour 小时
+     *
+     * @param hour   小时
      * @param minute 分钟
      * @return 相差时间 > 0 参数时间比该对象时间晚的分钟数
      * = 0说明时间相等
      * < 0 参数时间比该对象时间早的分钟数
      */
-    public int compareTime(int hour, int minute){
+    public int compareTime(int hour, int minute) {
         int alarmMinute = this.getTime();
         int curMinute = hour * 60 + minute;
 
@@ -57,9 +76,9 @@ public class AlarmTime implements Parcelable {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return String.format(Locale.getDefault(),
-                        "%02d:%02d", this.Hour, this.Minute);
+                "%02d:%02d", this.Hour, this.Minute);
     }
 
     @Override
@@ -72,21 +91,4 @@ public class AlarmTime implements Parcelable {
         dest.writeInt(this.Hour);
         dest.writeInt(this.Minute);
     }
-
-    protected AlarmTime(Parcel in) {
-        this.Hour = in.readInt();
-        this.Minute = in.readInt();
-    }
-
-    public static final Parcelable.Creator<AlarmTime> CREATOR = new Parcelable.Creator<AlarmTime>() {
-        @Override
-        public AlarmTime createFromParcel(Parcel source) {
-            return new AlarmTime(source);
-        }
-
-        @Override
-        public AlarmTime[] newArray(int size) {
-            return new AlarmTime[size];
-        }
-    };
 }

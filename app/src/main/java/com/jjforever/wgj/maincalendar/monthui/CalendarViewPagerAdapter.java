@@ -20,9 +20,9 @@ public class CalendarViewPagerAdapter extends PagerAdapter {
         this.mCalendarViews = views;
     }
 
-//    @Override
-//    public void finishUpdate(View arg0) {
-//    }
+    //    @Override
+    //    public void finishUpdate(View arg0) {
+    //    }
 
     @Override
     public void notifyDataSetChanged() {
@@ -37,14 +37,14 @@ public class CalendarViewPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         position %= mCalendarViews.length;
-        if (position < 0){
+        if (position < 0) {
             position = mCalendarViews.length + position;
         }
 
         CalendarView tmpView = mCalendarViews[position];
         ViewParent vp = tmpView.getParent();
-        if (vp != null){
-            ViewGroup parent = (ViewGroup)vp;
+        if (vp != null) {
+            ViewGroup parent = (ViewGroup) vp;
             parent.removeView(tmpView);
         }
         container.addView(tmpView);
@@ -68,12 +68,13 @@ public class CalendarViewPagerAdapter extends PagerAdapter {
 
     }
 
-//    @Override
-//    public void startUpdate(View arg0) {
-//    }
+    //    @Override
+    //    public void startUpdate(View arg0) {
+    //    }
 
     /**
      * 获取所有页面
+     *
      * @return 所有页面
      */
     CalendarView[] getAllItems() {

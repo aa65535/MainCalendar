@@ -31,20 +31,21 @@ public final class GlobalSettingMng {
 
     /**
      * 获取软件设置
+     *
      * @return 全局设置
      */
-    public static GlobalSetting getSetting(){
+    public static GlobalSetting getSetting() {
         return mSetting;
     }
 
-    public static void setSetting(GlobalSetting setting){
+    public static void setSetting(GlobalSetting setting) {
         mSetting = setting;
     }
 
     /**
      * 读取配置
      */
-    public static void ReadSetting(Context context){
+    public static void ReadSetting(Context context) {
         SharedPreferences preferences = context.getSharedPreferences(AppConstants.SETTING_PREFERENCE, Context.MODE_PRIVATE);
         mSetting.setShiftsWorkIndex(preferences.getLong(ShiftsWorkIndex, 0));
         mSetting.setPrimaryColor(preferences.getInt(PrimaryColor, ContextCompat.getColor(context, R.color.colorPrimary)));
@@ -57,7 +58,7 @@ public final class GlobalSettingMng {
     /**
      * 存储配置
      */
-    public static boolean SaveSetting(Activity activity){
+    public static boolean SaveSetting(Activity activity) {
         try {
             SharedPreferences preferences = activity.getSharedPreferences(AppConstants.SETTING_PREFERENCE, Context.MODE_PRIVATE);
             SharedPreferences.Editor tmpEditor = preferences.edit();
@@ -69,8 +70,7 @@ public final class GlobalSettingMng {
             tmpEditor.putBoolean(IsRecordLog, mSetting.getIsRecordLog());
             tmpEditor.apply();
             return true;
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             AppConstants.WLog(ex.toString());
             return false;
         }

@@ -29,28 +29,30 @@ public final class WeatherIconUtil {
 
     /**
      * 初始化天气描述
+     *
      * @param names 天气描述集合
      */
-    public static void initWeatherNames(String[] names)
-    {
+    public static void initWeatherNames(String[] names) {
         mWeatherNames = names;
     }
 
     /**
      * 返回所有的天气描述
+     *
      * @return 所有的天气描述
      */
-    public static String[] getWeatherNames(){
+    public static String[] getWeatherNames() {
         return mWeatherNames;
     }
 
     /**
      * 根据天气代码获取天气图标
+     *
      * @param type 天气情况代码
      * @return 天气图标
      */
     public static int getWeatherIcon(int type) {
-        if (type >= WeatherConstants.START_CODE && type <= WeatherConstants.END_CODE){
+        if (type >= WeatherConstants.START_CODE && type <= WeatherConstants.END_CODE) {
             return mWeatherIcons[type];
         }
         return R.drawable.ic_default_big;
@@ -58,12 +60,12 @@ public final class WeatherIconUtil {
 
     /**
      * 根据天气代码获取天气描述
+     *
      * @param type 天气代码
      * @return 天气描述
      */
-    public static String getWeatherName(int type)
-    {
-        if (type >= WeatherConstants.START_CODE && type <= WeatherConstants.END_CODE){
+    public static String getWeatherName(int type) {
+        if (type >= WeatherConstants.START_CODE && type <= WeatherConstants.END_CODE) {
             return mWeatherNames[type];
         }
 

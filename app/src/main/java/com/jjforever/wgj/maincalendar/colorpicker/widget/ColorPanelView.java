@@ -51,19 +51,6 @@ public class ColorPanelView extends View {
     private OnColorChangedListener mOnColorChangedListener;
 
     /**
-     * The interface On color changed listener.
-     */
-    public interface OnColorChangedListener {
-        /**
-         * On color changed.
-         *
-         * @param view  the view
-         * @param color the color
-         */
-        void onColorChanged(ColorPanelView view, int color);
-    }
-
-    /**
      * Instantiates a new Color panel view.
      *
      * @param context the context
@@ -407,8 +394,6 @@ public class ColorPanelView extends View {
         mOnColorChangedListener = onColorChangedListener;
     }
 
-    //region HSL math
-
     /**
      * @param x x coordinate of gradient
      * @return
@@ -417,6 +402,8 @@ public class ColorPanelView extends View {
         x = x - mGradientRect.left;
         return x * 360f / mGradientRect.width();
     }
+
+    //region HSL math
 
     private int hueToPoint(float hue) {
         return (int) (mGradientRect.left + ((hue * mGradientRect.width()) / 360));
@@ -453,7 +440,6 @@ public class ColorPanelView extends View {
         val = 1 - val;
         return (int) (mGradientRect.left + (mGradientRect.width() * val));
     }
-    //endregion HSL math
 
     /**
      * Sets pointer drawable.
@@ -466,6 +452,7 @@ public class ColorPanelView extends View {
             requestLayout();
         }
     }
+    //endregion HSL math
 
     /**
      * Sets lock pointer in bounds.
@@ -502,7 +489,34 @@ public class ColorPanelView extends View {
         setColor(ss.color, true);
     }
 
+    /**
+     * The interface On color changed listener.
+     */
+    public interface OnColorChangedListener {
+        /**
+         * On color changed.
+         *
+         * @param view  the view
+         * @param color the color
+         */
+        void onColorChanged(ColorPanelView view, int color);
+    }
+
     private static class SavedState extends BaseSavedState {
+        /**
+         * The constant CREATOR.
+         */
+        //required field that makes Parcelables from a Parcel
+        public static final Creator<SavedState> CREATOR =
+                new Creator<SavedState>() {
+                    public SavedState createFromParcel(Parcel in) {
+                        return new SavedState(in);
+                    }
+
+                    public SavedState[] newArray(int size) {
+                        return new SavedState[size];
+                    }
+                };
         /**
          * The Color.
          */
@@ -533,21 +547,6 @@ public class ColorPanelView extends View {
             out.writeInt(color);
             out.writeInt(isBrightnessGradient ? 1 : 0);
         }
-
-        /**
-         * The constant CREATOR.
-         */
-//required field that makes Parcelables from a Parcel
-        public static final Creator<SavedState> CREATOR =
-                new Creator<SavedState>() {
-                    public SavedState createFromParcel(Parcel in) {
-                        return new SavedState(in);
-                    }
-
-                    public SavedState[] newArray(int size) {
-                        return new SavedState[size];
-                    }
-                };
     }
 
 }

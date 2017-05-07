@@ -72,23 +72,6 @@ public final class FileUtils {
     public static final int BY_EXTENSION_DESC = 7;
 
     /**
-     * The interface Sort type.
-     */
-    @IntDef(flag = false, value = {
-            BY_NAME_ASC,
-            BY_NAME_DESC,
-            BY_TIME_ASC,
-            BY_TIME_DESC,
-            BY_SIZE_ASC,
-            BY_SIZE_DESC,
-            BY_EXTENSION_ASC,
-            BY_EXTENSION_DESC
-    })
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface SortType {
-    }
-
-    /**
      * 为目录结尾添加“/”
      *
      * @param path the path
@@ -848,6 +831,23 @@ public final class FileUtils {
     @RequiresPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public static boolean makeDirs(File file) {
         return file.mkdirs();
+    }
+
+    /**
+     * The interface Sort type.
+     */
+    @IntDef(flag = false, value = {
+            BY_NAME_ASC,
+            BY_NAME_DESC,
+            BY_TIME_ASC,
+            BY_TIME_DESC,
+            BY_SIZE_ASC,
+            BY_SIZE_DESC,
+            BY_EXTENSION_ASC,
+            BY_EXTENSION_DESC
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface SortType {
     }
 
     /**

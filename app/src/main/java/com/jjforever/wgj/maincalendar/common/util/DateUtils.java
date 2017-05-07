@@ -18,25 +18,6 @@ import java.util.List;
 public class DateUtils extends android.text.format.DateUtils {
 
     /**
-     * The enum Difference mode.
-     */
-    public enum DifferenceMode {
-        /**
-         * Second difference mode.
-         */
-        Second, /**
-         * Minute difference mode.
-         */
-        Minute, /**
-         * Hour difference mode.
-         */
-        Hour, /**
-         * Day difference mode.
-         */
-        Day
-    }
-
-    /**
      * Calculate different second long.
      *
      * @param startDate the start CellDate
@@ -290,6 +271,25 @@ public class DateUtils extends android.text.format.DateUtils {
      */
     public static Date parseDate(String dateStr) {
         return parseDate(dateStr, "yyyy-MM-dd HH:mm:ss");
+    }
+
+    /**
+     * The enum Difference mode.
+     */
+    public enum DifferenceMode {
+        /**
+         * Second difference mode.
+         */
+        Second, /**
+         * Minute difference mode.
+         */
+        Minute, /**
+         * Hour difference mode.
+         */
+        Hour, /**
+         * Day difference mode.
+         */
+        Day
     }
 
 }

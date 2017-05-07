@@ -9,7 +9,6 @@ import com.jjforever.wgj.maincalendar.util.DateUtil;
 import com.jjforever.wgj.maincalendar.util.LunarCalendar;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Locale;
 
 /**
@@ -25,15 +24,17 @@ public final class AlarmRecordMng {
     /**
      * 构造方法，私有化，禁止实例化
      */
-    private AlarmRecordMng(){}
+    private AlarmRecordMng() {
+    }
 
     /**
      * 根据记录获取ContentValues
+     *
      * @param record 闹钟记录
-     * @param isNew 是否为需要插入的新记录
+     * @param isNew  是否为需要插入的新记录
      * @return ContentValues
      */
-    private static ContentValues getValues(AlarmRecord record, boolean isNew){
+    private static ContentValues getValues(AlarmRecord record, boolean isNew) {
         // 实例化常量值
         ContentValues cValue = new ContentValues();
         // 记录时间
@@ -62,20 +63,19 @@ public final class AlarmRecordMng {
 
     /**
      * 往数据库中添加一条闹钟记录
+     *
      * @param record 闹钟记录
      * @return 成功返回索引，失败返回-1
      */
-    private static long insertSQL(AlarmRecord record){
+    private static long insertSQL(AlarmRecord record) {
         AppConstants.DLog("DBManager --> add alarm");
-        try
-        {
+        try {
             // 实例化常量值
             ContentValues cValue = getValues(record, true);
 
             //调用insert()方法插入数据
             return DatabaseHelper.SQLiteDb.insert(TABLE_NAME, null, cValue);
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             AppConstants.WLog(ex.toString());
             return -1;
         }
@@ -83,16 +83,17 @@ public final class AlarmRecordMng {
 
     /**
      * 插入一条闹钟记录
+     *
      * @param record 要插入的闹钟记录
      * @return 插入成功与否
      */
-    public static boolean insert(AlarmRecord record){
+    public static boolean insert(AlarmRecord record) {
         long tmpIndex = insertSQL(record);
-        if (tmpIndex <= 0){
+        if (tmpIndex <= 0) {
             return false;
         }
         record.setIndex(tmpIndex);
-        if (mAlarmRecords == null){
+        if (mAlarmRecords == null) {
             mAlarmRecords = new ArrayList<>();
         }
         mAlarmRecords.add(0, record);
@@ -101,18 +102,18 @@ public final class AlarmRecordMng {
 
     /**
      * 更新记录
+     *
      * @param record 要更新的记录
      * @return 是否更新成功
      */
-    private static boolean updateSQL(AlarmRecord record){
-        try{
+    private static boolean updateSQL(AlarmRecord record) {
+        try {
             // 实例化常量值
             ContentValues cValue = getValues(record, false);
 
             return DatabaseHelper.SQLiteDb.update(TABLE_NAME, cValue, "alarm_index=?",
-                    new String[] { String.valueOf(record.getIndex()) }) > 0;
-        }
-        catch (Exception ex){
+                    new String[]{String.valueOf(record.getIndex())}) > 0;
+        } catch (Exception ex) {
             AppConstants.WLog(ex.toString());
             return false;
         }
@@ -120,14 +121,15 @@ public final class AlarmRecordMng {
 
     /**
      * 在数据库与内存中更新一条闹钟记录
+     *
      * @param record 要更新的记录
      * @return 成功与否
      */
-    public static boolean update(AlarmRecord record){
-        if (updateSQL(record)){
-            if (mAlarmRecords != null){
-                for (int i = 0; i < mAlarmRecords.size(); i++){
-                    if (mAlarmRecords.get(i).getIndex() == record.getIndex()){
+    public static boolean update(AlarmRecord record) {
+        if (updateSQL(record)) {
+            if (mAlarmRecords != null) {
+                for (int i = 0; i < mAlarmRecords.size(); i++) {
+                    if (mAlarmRecords.get(i).getIndex() == record.getIndex()) {
                         mAlarmRecords.set(i, record);
                         break;
                     }
@@ -141,14 +143,15 @@ public final class AlarmRecordMng {
 
     /**
      * 根据索引从集合中删除一条记录
+     *
      * @param index 索引
      */
-    private static void deleteFromList(long index){
-        if (mAlarmRecords == null){
+    private static void deleteFromList(long index) {
+        if (mAlarmRecords == null) {
             return;
         }
-        for (AlarmRecord tmpRecord : mAlarmRecords){
-            if (tmpRecord.getIndex() == index){
+        for (AlarmRecord tmpRecord : mAlarmRecords) {
+            if (tmpRecord.getIndex() == index) {
                 mAlarmRecords.remove(tmpRecord);
                 return;
             }
@@ -157,15 +160,15 @@ public final class AlarmRecordMng {
 
     /**
      * 根据索引删除一条闹钟记录
+     *
      * @param index 记录索引
      * @return 是否成功
      */
-    private static boolean deleteSQL(long index){
-        try{
+    private static boolean deleteSQL(long index) {
+        try {
             return DatabaseHelper.SQLiteDb.delete(TABLE_NAME, "alarm_index=?",
-                    new String[] { String.valueOf(index) }) >= 0;
-        }
-        catch (Exception ex){
+                    new String[]{String.valueOf(index)}) >= 0;
+        } catch (Exception ex) {
             AppConstants.WLog(ex.toString());
             return false;
         }
@@ -173,11 +176,12 @@ public final class AlarmRecordMng {
 
     /**
      * 根据索引从数据库及内存中删除一条闹钟记录
+     *
      * @param index 索引
      * @return 删除成功与否
      */
-    public static boolean delete(long index){
-        if (deleteSQL(index)){
+    public static boolean delete(long index) {
+        if (deleteSQL(index)) {
             deleteFromList(index);
             return true;
         }
@@ -187,43 +191,40 @@ public final class AlarmRecordMng {
 
     /**
      * 根据索引集合批量删除记录
+     *
      * @param indexs 索引集合
      * @return 删除成功与否
      */
-    private static boolean deleteSQL(ArrayList<Long> indexs){
+    private static boolean deleteSQL(ArrayList<Long> indexs) {
         // 采用事务处理，确保数据完整性
         DatabaseHelper.SQLiteDb.beginTransaction();
-        try
-        {
-            for (long index : indexs)
-            {
+        try {
+            for (long index : indexs) {
                 DatabaseHelper.SQLiteDb.delete(TABLE_NAME, "alarm_index=?",
-                        new String[] { String.valueOf(index) });
+                        new String[]{String.valueOf(index)});
             }
             // 设置事务成功完成
             DatabaseHelper.SQLiteDb.setTransactionSuccessful();
             return true;
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             AppConstants.WLog(ex.toString());
             return false;
-        }
-        finally
-        {
+        } finally {
             DatabaseHelper.SQLiteDb.endTransaction(); // 结束事务
         }
     }
 
     /**
      * 从数据库与内存列表中删除一条闹钟记录
+     *
      * @param indexs 删除的闹钟记录索引集合
      * @return 删除成功与否
      */
-    public static boolean delete(ArrayList<Long> indexs){
-        if (deleteSQL(indexs)){
-            if (mAlarmRecords != null){
+    public static boolean delete(ArrayList<Long> indexs) {
+        if (deleteSQL(indexs)) {
+            if (mAlarmRecords != null) {
                 // 从集合中删除
-                for (long index : indexs){
+                for (long index : indexs) {
                     deleteFromList(index);
                 }
             }
@@ -235,47 +236,47 @@ public final class AlarmRecordMng {
 
     /**
      * 检查数据库是否存在此标题的记录
+     *
      * @param title 要检查的标题
      * @param index 不为0则排除该索引
      * @return 是否存在
      */
-    public static boolean isExist(String title, long index){
+    public static boolean isExist(String title, long index) {
         String sqlStr = "select count(*) from " + TABLE_NAME;
         sqlStr += String.format(" where title='%s'", title);
-        if (index > 0){
+        if (index > 0) {
             sqlStr += String.format(Locale.getDefault(),
-                            " and alarm_index<>'%d'", index);
+                    " and alarm_index<>'%d'", index);
         }
         Cursor cursor = DatabaseHelper.SQLiteDb.rawQuery(sqlStr, null);
-        if (cursor == null){
+        if (cursor == null) {
             return false;
         }
         try {
             return (cursor.moveToNext() && cursor.getLong(0) > 0);
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             AppConstants.WLog(ex.toString());
             return false;
-        }
-        finally {
+        } finally {
             cursor.close();
         }
     }
 
     /**
      * 根据条件查询所有的闹钟记录
-     * @param where where条件
-     * @param args where条件的参数
+     *
+     * @param where   where条件
+     * @param args    where条件的参数
      * @param orderBy 排序语句
-     * @param limit 限制语句
+     * @param limit   限制语句
      * @return 闹钟记录集合
      */
     @SuppressWarnings("WrongConstant")
-    private static ArrayList<AlarmRecord> select(String where, String[] args, String orderBy, String limit){
+    private static ArrayList<AlarmRecord> select(String where, String[] args, String orderBy, String limit) {
         ArrayList<AlarmRecord> tmpLst = new ArrayList<>();
 
         Cursor cursor = DatabaseHelper.SQLiteDb.query(TABLE_NAME, null, where, args, null, null, orderBy, limit);
-        if (cursor == null){
+        if (cursor == null) {
             return tmpLst;
         }
 
@@ -301,11 +302,9 @@ public final class AlarmRecordMng {
 
                 tmpLst.add(tmpRecord);
             }
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             AppConstants.WLog(ex.toString());
-        }
-        finally {
+        } finally {
             cursor.close();
         }
 
@@ -314,9 +313,10 @@ public final class AlarmRecordMng {
 
     /**
      * 根据索引降序排列取出所有闹钟记录
+     *
      * @return 查询到的闹钟记录
      */
-    private static ArrayList<AlarmRecord> selectAll(){
+    private static ArrayList<AlarmRecord> selectAll() {
         return select(null, null, "alarm_index DESC", null);
     }
 
@@ -325,60 +325,62 @@ public final class AlarmRecordMng {
      * @param index 索引
      * @return 指定索引的闹钟记录
      */
-//    private static AlarmRecord select(long index){
-//        ArrayList<AlarmRecord> tmpLst = select("alarm_index=?", new String[]{String.valueOf(index)}, null, null);
-//        if (tmpLst == null || tmpLst.size() <= 0){
-//            return null;
-//        }
-//
-//        return tmpLst.get(0);
-//    }
+    //    private static AlarmRecord select(long index){
+    //        ArrayList<AlarmRecord> tmpLst = select("alarm_index=?", new String[]{String.valueOf(index)}, null, null);
+    //        if (tmpLst == null || tmpLst.size() <= 0){
+    //            return null;
+    //        }
+    //
+    //        return tmpLst.get(0);
+    //    }
 
     /**
      * 根据索引获取闹钟记录
      * @param index 索引
      * @return 闹钟记录
      */
-//    public static AlarmRecord getRecord(long index){
-//        for (AlarmRecord tmpRecord : mAlarmRecords){
-//            if (tmpRecord.getIndex() == index){
-//                return tmpRecord;
-//            }
-//        }
-//
-//        return null;
-//    }
+    //    public static AlarmRecord getRecord(long index){
+    //        for (AlarmRecord tmpRecord : mAlarmRecords){
+    //            if (tmpRecord.getIndex() == index){
+    //                return tmpRecord;
+    //            }
+    //        }
+    //
+    //        return null;
+    //    }
 
     /**
      * 载入所有闹钟记录
      */
-    public static void initAlarmRecords(){
+    public static void initAlarmRecords() {
         mAlarmRecords = AlarmRecordMng.selectAll();
     }
 
     /**
      * 获取所有的闹钟记录
+     *
      * @return 闹钟记录
      */
-    public static ArrayList<AlarmRecord> getAllRecords(){
+    public static ArrayList<AlarmRecord> getAllRecords() {
         return mAlarmRecords;
     }
 
     /**
      * 获取指定日期的闹钟记录
+     *
      * @param calendar 指定日期
      * @return 闹钟记录
      */
-    public static ArrayList<AlarmRecord> getRecords(LunarCalendar calendar){
-        if (mAlarmRecords == null){
+    public static ArrayList<AlarmRecord> getRecords(LunarCalendar calendar) {
+        if (mAlarmRecords == null) {
             return null;
         }
-        if (DateUtil.compareDate(calendar) < 0){
+        if (DateUtil.compareDate(calendar) < 0) {
             return null;
         }
 
         ArrayList<AlarmRecord> tmpLst = new ArrayList<>();
-        for (AlarmRecord tmpRecord : mAlarmRecords){
+        for (AlarmRecord tmpRecord : mAlarmRecords) {
             if (tmpRecord.getActionType() != AlarmRecord.BY_WEEK
                     && !tmpRecord.getPause() && tmpRecord.getDisplay()) {
                 if (tmpRecord.isRecordDate(calendar)) {
@@ -392,6 +394,7 @@ public final class AlarmRecordMng {
 
     /**
      * 根据当前时间获取下次闹钟时间点
+     *
      * @param curTime 当前时间
      * @return 下次时间点
      */
@@ -404,7 +407,7 @@ public final class AlarmRecordMng {
         }
 
         try {
-            if (cursor.moveToNext()){
+            if (cursor.moveToNext()) {
                 return cursor.getInt(cursor.getColumnIndex("alarm_time"));
             }
         } catch (Exception ex) {
@@ -418,12 +421,13 @@ public final class AlarmRecordMng {
 
     /**
      * 获取下次闹钟响应时间
+     *
      * @param curTime 当前时间
      * @return 下次时间 小于0说明未取到
      */
-    public static int getNextAlarmTime(int curTime){
+    public static int getNextAlarmTime(int curTime) {
         int nextTime = getNextLargerAlarmTime(curTime);
-        if (nextTime >= 0){
+        if (nextTime >= 0) {
             return nextTime;
         }
 
@@ -436,7 +440,7 @@ public final class AlarmRecordMng {
         }
 
         try {
-            if (cursor.moveToNext()){
+            if (cursor.moveToNext()) {
                 return cursor.getInt(cursor.getColumnIndex("alarm_time"));
             }
         } catch (Exception ex) {
@@ -450,20 +454,21 @@ public final class AlarmRecordMng {
 
     /**
      * 获取指定目前日期时间的闹钟记录，用于提示用户
+     *
      * @return 符合条件的闹钟记录
      */
-    public static ArrayList<AlarmRecord> getAlarmRecordsCurrent(int totalMinute, LunarCalendar calendar){
+    public static ArrayList<AlarmRecord> getAlarmRecordsCurrent(int totalMinute, LunarCalendar calendar) {
         // 先根据时间查找当前时间前三分钟到目前的记录，并且非暂停记录
         ArrayList<AlarmRecord> selectLst = select("pause<>? and alarm_time=?",
-                                    new String[]{"1", String.valueOf(totalMinute)},
-                                    "alarm_index DESC", null);
-        if (selectLst == null){
+                new String[]{"1", String.valueOf(totalMinute)},
+                "alarm_index DESC", null);
+        if (selectLst == null) {
             return null;
         }
 
         // 获取当前时间
         ArrayList<AlarmRecord> tmpLst = new ArrayList<>();
-        for (AlarmRecord tmpRecord : selectLst){
+        for (AlarmRecord tmpRecord : selectLst) {
             if (tmpRecord.isRecordDate(calendar)) {
                 // 是当天的
                 tmpLst.add(tmpRecord);

@@ -18,66 +18,67 @@ public class GlobalSetting {
     // 是否将调试信息写入到文件中
     private boolean mRecordLog;
 
-    public GlobalSetting(){
+    public GlobalSetting() {
         this.mRingSeconds = 60;
         this.mShiftsWorkIndex = 0;
         this.mNotification = true;
         this.mRecordLog = false;
     }
 
-    public long getShiftsWorkIndex(){
+    public long getShiftsWorkIndex() {
         return mShiftsWorkIndex;
     }
 
-    public void setShiftsWorkIndex(long index){
+    public void setShiftsWorkIndex(long index) {
         this.mShiftsWorkIndex = index;
     }
 
-    public int getPrimaryColor(){
+    public int getPrimaryColor() {
         return mPrimaryColor;
     }
 
-    public void setPrimaryColor(int color){
+    public void setPrimaryColor(int color) {
         this.mPrimaryColor = color;
     }
 
-    public String getRingPath(){
+    public String getRingPath() {
         return mRingPath;
     }
 
-    public void setRingPath(String path){
+    public void setRingPath(String path) {
         this.mRingPath = path;
     }
 
-    public int getRingSeconds(){
+    public int getRingSeconds() {
         return mRingSeconds;
     }
 
-    public void setRingSeconds(int seconds){
+    public void setRingSeconds(int seconds) {
         this.mRingSeconds = seconds;
     }
 
-    public boolean getIsNotification(){
+    public boolean getIsNotification() {
         return mNotification;
     }
 
-    public void setIsNotification(boolean isNotification){
+    public void setIsNotification(boolean isNotification) {
         this.mNotification = isNotification;
     }
 
-    public boolean getIsRecordLog(){
+    public boolean getIsRecordLog() {
         return mRecordLog;
     }
 
-    public void setIsRecordLog(boolean isRecord){
+    public void setIsRecordLog(boolean isRecord) {
         this.mRecordLog = isRecord;
     }
 
     /**
      * 复制本地对象
+     *
      * @return 复制的对象
      */
-    public GlobalSetting depthClone(){
+    public GlobalSetting depthClone() {
         GlobalSetting copyObj = new GlobalSetting();
 
         copyObj.setPrimaryColor(this.mPrimaryColor);

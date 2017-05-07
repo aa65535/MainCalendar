@@ -2,6 +2,7 @@ package com.jjforever.wgj.maincalendar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -15,7 +16,6 @@ import com.jjforever.wgj.maincalendar.listviewpicker.picker.WeekPicker;
 import com.jjforever.wgj.maincalendar.monthui.SwitchButton;
 import com.jjforever.wgj.maincalendar.services.CalendarService;
 import com.jjforever.wgj.maincalendar.toolbar.ToolBarActivity;
-import com.jjforever.wgj.maincalendar.util.Helper;
 import com.jjforever.wgj.maincalendar.util.LunarCalendar;
 import com.jjforever.wgj.maincalendar.wheelpicker.picker.DatePicker;
 import com.jjforever.wgj.maincalendar.wheelpicker.picker.LunarMonthPicker;
@@ -60,7 +60,7 @@ public class AddAlarmActivity extends ToolBarActivity {
         setContentView(R.layout.activity_add_alarm);
 
         mRecord = getIntent().getParcelableExtra(AppConstants.MAIN_ACTIVITY_CLICK_DATE);
-        if (mRecord == null){
+        if (mRecord == null) {
             // 获取错误
             mSureQuit = true;
             finish();
@@ -71,7 +71,7 @@ public class AddAlarmActivity extends ToolBarActivity {
         mAlarmPeriod = mRecord.getHighDay();
         mDisplayButton = (SwitchButton) this.findViewById(R.id.display_in_calendar);
         mDisplayButton.setChecked(mRecord.getDisplay());
-        RelativeLayout displayLayout =  (RelativeLayout) this.findViewById(R.id.display_layout);
+        RelativeLayout displayLayout = (RelativeLayout) this.findViewById(R.id.display_layout);
         if (displayLayout != null) {
             displayLayout.setOnClickListener(this);
         }
@@ -83,45 +83,45 @@ public class AddAlarmActivity extends ToolBarActivity {
         }
 
         mAlarmTypeText = (TextView) this.findViewById(R.id.alarm_type);
-        if (AppConstants.AlarmTypeNames == null){
+        if (AppConstants.AlarmTypeNames == null) {
             // 载入闹钟类型
             AppConstants.AlarmTypeNames = getResources().getStringArray(R.array.alarm_type_names);
         }
         mAlarmTypeText.setText(AppConstants.AlarmTypeNames[AppConstants.getActionTypeIndex(mRecord.getActionType())]);
-//        mAlarmTypeText.setOnClickListener(this);
+        //        mAlarmTypeText.setOnClickListener(this);
         RelativeLayout typeLayout = (RelativeLayout) this.findViewById(R.id.type_layout);
-        if (typeLayout != null){
+        if (typeLayout != null) {
             typeLayout.setOnClickListener(this);
         }
 
         mTimeText = (TextView) this.findViewById(R.id.alarm_notice_time);
         mTimeText.setText(mRecord.getAlarmTime().toString());
-//        mTimeText.setOnClickListener(this);
+        //        mTimeText.setOnClickListener(this);
         RelativeLayout timeLayout = (RelativeLayout) this.findViewById(R.id.notice_time_layout);
-        if (timeLayout != null){
+        if (timeLayout != null) {
             timeLayout.setOnClickListener(this);
         }
 
         mAlarmStartLayout = (RelativeLayout) this.findViewById(R.id.alarm_start_layout);
         mAlarmStartView = (TextView) this.findViewById(R.id.alarm_start);
         mAlarmStartView.setText(new LunarCalendar(mRecord.getYear(), mRecord.getMonth(), mRecord.getDay()).toShortString());
-//        mAlarmStartView.setOnClickListener(this);
+        //        mAlarmStartView.setOnClickListener(this);
         mAlarmStartLayout.setOnClickListener(this);
 
         mDateText = (TextView) this.findViewById(R.id.alarm_date);
         setDateText(mRecord);
-//        mDateText.setOnClickListener(this);
+        //        mDateText.setOnClickListener(this);
         RelativeLayout dateLayout = (RelativeLayout) this.findViewById(R.id.alarm_date_layout);
-        if (dateLayout != null){
+        if (dateLayout != null) {
             dateLayout.setOnClickListener(this);
         }
 
         mTitleEdit = (EditText) this.findViewById(R.id.text_alarm_title);
-        if (mTitleEdit != null && !Helper.isNullOrEmpty(mRecord.getOnlyTitle())) {
+        if (mTitleEdit != null && !TextUtils.isEmpty(mRecord.getOnlyTitle())) {
             mTitleEdit.setText(mRecord.getOnlyTitle());
         }
         mContentEdit = (EditText) this.findViewById(R.id.alarm_remark);
-        if (mContentEdit != null && !Helper.isNullOrEmpty(mRecord.getContent())){
+        if (mContentEdit != null && !TextUtils.isEmpty(mRecord.getContent())) {
             mContentEdit.setText(mRecord.getContent());
         }
         if (!mRecord.getIsNew()) {
@@ -133,15 +133,15 @@ public class AddAlarmActivity extends ToolBarActivity {
 
     /**
      * 根据闹钟类型设置显示的日期文本
+     *
      * @param record 闹钟记录
      */
-    private void setDateText(AlarmRecord record){
+    private void setDateText(AlarmRecord record) {
         String typeStr = record.getDateString();
-        if (record.getActionType() == AlarmRecord.BY_DAY){
+        if (record.getActionType() == AlarmRecord.BY_DAY) {
             this.mDateText.setText(String.format(Locale.getDefault(), "每%d日", mAlarmPeriod));
             this.mAlarmStartLayout.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             this.mAlarmStartLayout.setVisibility(View.GONE);
             this.mDateText.setText(typeStr);
         }
@@ -159,12 +159,12 @@ public class AddAlarmActivity extends ToolBarActivity {
                 mPauseButton.setChecked(!mPauseButton.isChecked());
                 break;
 
-//            case R.id.alarm_date:
+            //            case R.id.alarm_date:
             case R.id.alarm_date_layout:
                 showDatePicker(mRecord.getActionType());
                 break;
 
-//            case R.id.alarm_start:
+            //            case R.id.alarm_start:
             case R.id.alarm_start_layout:
                 // 闹钟开始日期
                 DatePicker picker = new DatePicker(this, DatePicker.YEAR_MONTH_DAY);
@@ -187,7 +187,7 @@ public class AddAlarmActivity extends ToolBarActivity {
                 picker.show();
                 break;
 
-//            case R.id.alarm_notice_time:
+            //            case R.id.alarm_notice_time:
             case R.id.notice_time_layout:
                 // 选择提醒时间
                 TimePicker timePicker = new TimePicker(this, TimePicker.HOUR_OF_DAY);
@@ -196,7 +196,7 @@ public class AddAlarmActivity extends ToolBarActivity {
                     @Override
                     public void onTimePicked(int hour, int minute) {
                         if (mRecord.getAlarmTime().Hour != hour
-                                || mRecord.getAlarmTime().Minute != minute){
+                                || mRecord.getAlarmTime().Minute != minute) {
                             mIsChanged = true;
                             mRecord.setAlarmTime(hour, minute);
                             mTimeText.setText(mRecord.getAlarmTime().toString());
@@ -206,7 +206,7 @@ public class AddAlarmActivity extends ToolBarActivity {
                 timePicker.show();
                 break;
 
-//            case R.id.alarm_type:
+            //            case R.id.alarm_type:
             case R.id.type_layout:
                 // 闹钟类型
                 OptionPicker tmpOption = new OptionPicker(this, AppConstants.AlarmTypeNames);
@@ -217,8 +217,8 @@ public class AddAlarmActivity extends ToolBarActivity {
                     public void onOptionPicked(String option) {
                         @AlarmRecord.Flag
                         int tmpType = AlarmRecord.ONCE;
-                        for (int i = 0; i < AppConstants.AlarmTypeNames.length; i++){
-                            if (option.equals(AppConstants.AlarmTypeNames[i])){
+                        for (int i = 0; i < AppConstants.AlarmTypeNames.length; i++) {
+                            if (option.equals(AppConstants.AlarmTypeNames[i])) {
                                 tmpType = AppConstants.AlarmTypeIndexs[i];
                                 break;
                             }
@@ -236,12 +236,13 @@ public class AddAlarmActivity extends ToolBarActivity {
 
     /**
      * 根据闹钟类型弹出日期选择框
+     *
      * @param actionType 类型
      */
-    private void showDatePicker(@AlarmRecord.Flag final int actionType){
+    private void showDatePicker(@AlarmRecord.Flag final int actionType) {
         final int tmpIndex = AppConstants.getActionTypeIndex(actionType);
 
-        switch (actionType){
+        switch (actionType) {
             case AlarmRecord.ONCE:
             case AlarmRecord.BY_LUNAR_ONCE:
                 // 指定农历或者阳历日期都以定义到阳历日期以方便定义闹钟
@@ -276,7 +277,7 @@ public class AddAlarmActivity extends ToolBarActivity {
                     public void onOptionPicked(String option) {
                         int tmpPeriod = Integer.parseInt(option);
                         if (tmpPeriod != mAlarmPeriod
-                                || mRecord.getActionType() != actionType){
+                                || mRecord.getActionType() != actionType) {
                             mIsChanged = true;
                             mAlarmPeriod = tmpPeriod;
                             mRecord.setActionType(actionType);
@@ -295,10 +296,10 @@ public class AddAlarmActivity extends ToolBarActivity {
                     @Override
                     public void onWeekPicked(int selected) {
                         AppConstants.DLog("selected items is: " + selected);
-                        if (selected == 0){
+                        if (selected == 0) {
                             return;
                         }
-                        if (selected != mRecord.getDay() || mRecord.getActionType() != actionType){
+                        if (selected != mRecord.getDay() || mRecord.getActionType() != actionType) {
                             mIsChanged = true;
                             mRecord.setActionType(actionType);
                             mRecord.setDay(selected);
@@ -319,7 +320,7 @@ public class AddAlarmActivity extends ToolBarActivity {
                     @Override
                     public void onOptionPicked(String option) {
                         int newVal = Integer.parseInt(option);
-                        if (newVal != mRecord.getDay() || mRecord.getActionType() != actionType){
+                        if (newVal != mRecord.getDay() || mRecord.getActionType() != actionType) {
                             mIsChanged = true;
                             mRecord.setActionType(actionType);
                             mRecord.setDay(newVal);
@@ -363,14 +364,14 @@ public class AddAlarmActivity extends ToolBarActivity {
                     @Override
                     public void onOptionPicked(String option) {
                         int newVal = 0;
-                        for (int i = 0; i < LunarCalendar.lunarDateNames.length; i++){
-                            if (option.equals(LunarCalendar.lunarDateNames[i])){
+                        for (int i = 0; i < LunarCalendar.lunarDateNames.length; i++) {
+                            if (option.equals(LunarCalendar.lunarDateNames[i])) {
                                 newVal = i;
                                 break;
                             }
                         }
 
-                        if (newVal != mRecord.getDay() || mRecord.getActionType() != actionType){
+                        if (newVal != mRecord.getDay() || mRecord.getActionType() != actionType) {
                             mIsChanged = true;
                             mRecord.setActionType(actionType);
                             mRecord.setDay(newVal);
@@ -410,9 +411,10 @@ public class AddAlarmActivity extends ToolBarActivity {
 
     /**
      * 显示提示消息
+     *
      * @param msgId 提示消息字符串ID
      */
-    private void showToastMsg(int msgId){
+    private void showToastMsg(int msgId) {
         Toast.makeText(AddAlarmActivity.this,
                 getResources().getString(msgId),
                 Toast.LENGTH_SHORT).show();
@@ -421,34 +423,33 @@ public class AddAlarmActivity extends ToolBarActivity {
     /**
      * 启动闹钟服务
      */
-    private void startService(){
-//        Calendar tmpCalendar = Calendar.getInstance();
-//        if (record.getAlarmTime().compareTime(tmpCalendar.get(Calendar.HOUR_OF_DAY),
-//                tmpCalendar.get(Calendar.MINUTE)) <= 0){
-            // 说明闹钟时间比当前时间晚，触发一下服务
-            startService(new Intent(this, CalendarService.class));
-//        }
+    private void startService() {
+        //        Calendar tmpCalendar = Calendar.getInstance();
+        //        if (record.getAlarmTime().compareTime(tmpCalendar.get(Calendar.HOUR_OF_DAY),
+        //                tmpCalendar.get(Calendar.MINUTE)) <= 0){
+        // 说明闹钟时间比当前时间晚，触发一下服务
+        startService(new Intent(this, CalendarService.class));
+        //        }
     }
 
     @Override
-    public void onOKButtonClick()
-    {
+    public void onOKButtonClick() {
         String title = mTitleEdit.getText().toString();
-        if (Helper.isNullOrEmpty(title)){
+        if (TextUtils.isEmpty(title)) {
             new DialogPicker(this, getResources().getString(R.string.must_input_title)).show();
             return;
         }
         String content = mContentEdit.getText().toString();
-        if (AlarmRecordMng.isExist(title, mRecord.getIndex())){
+        if (AlarmRecordMng.isExist(title, mRecord.getIndex())) {
             // 该标题已存在
             showToastMsg(R.string.existed_record);
             return;
         }
-        if (mRecord.getActionType() == AlarmRecord.BY_DAY){
+        if (mRecord.getActionType() == AlarmRecord.BY_DAY) {
             mRecord.setHighDay(mAlarmPeriod);
         }
-        
-        if (mRecord.getIsNew()){
+
+        if (mRecord.getIsNew()) {
             // 新建记录
             mRecord.setTitle(title);
             mRecord.setContent(content);
@@ -469,8 +470,7 @@ public class AddAlarmActivity extends ToolBarActivity {
                 finish();
                 return;
             }
-        }
-        else{
+        } else {
             // 编辑记录
             mRecord.setTitle(title);
             mRecord.setContent(content);
@@ -493,8 +493,8 @@ public class AddAlarmActivity extends ToolBarActivity {
     }
 
     @Override
-    public void onDeleteButtonClick(){
-        if (mRecord.getIsNew()){
+    public void onDeleteButtonClick() {
+        if (mRecord.getIsNew()) {
             return;
         }
         // 删除当前记录
@@ -509,8 +509,7 @@ public class AddAlarmActivity extends ToolBarActivity {
                         setResult(AppConstants.RESULT_DELETE, null);
                         mSureQuit = true;
                         finish();
-                    }
-                    else{
+                    } else {
                         showToastMsg(R.string.delete_fail);
                     }
                 }
@@ -520,9 +519,8 @@ public class AddAlarmActivity extends ToolBarActivity {
     }
 
     @Override
-    public void finish()
-    {
-        if (mSureQuit){
+    public void finish() {
+        if (mSureQuit) {
             super.finish();
             return;
         }
@@ -534,7 +532,7 @@ public class AddAlarmActivity extends ToolBarActivity {
         if (!title.equals(mRecord.getOnlyTitle())
                 || !content.equals(mRecord.getContent())
                 || isDisplayed != mRecord.getDisplay()
-                || isPaused != mRecord.getPause()){
+                || isPaused != mRecord.getPause()) {
             mIsChanged = true;
         }
 

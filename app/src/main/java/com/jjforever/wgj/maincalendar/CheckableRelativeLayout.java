@@ -19,14 +19,14 @@ public class CheckableRelativeLayout extends RelativeLayout implements Checkable
     }
 
     @Override
-    public void setChecked(boolean checked) {
-        mChecked = checked;
-        setBackgroundColor(checked ? ThemeStyle.ItemSelected : ThemeStyle.BackColor);
+    public boolean isChecked() {
+        return mChecked;
     }
 
     @Override
-    public boolean isChecked() {
-        return mChecked;
+    public void setChecked(boolean checked) {
+        mChecked = checked;
+        setBackgroundColor(checked ? ThemeStyle.ItemSelected : ThemeStyle.BackColor);
     }
 
     @Override

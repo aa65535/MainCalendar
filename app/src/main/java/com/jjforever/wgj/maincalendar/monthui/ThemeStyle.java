@@ -36,13 +36,15 @@ public class ThemeStyle {
     public static int WorkDay;
     // 夜班背景色
     public static int WorkNight;
+    // 休班背景色
+    public static int RestDay;
 
     /**
      * 从资源中载入默认主题
+     *
      * @param context 内容提供器
      */
-    public static void LoadThemeResource(Context context)
-    {
+    public static void LoadThemeResource(Context context) {
         PrimaryDark = ContextCompat.getColor(context, R.color.colorPrimaryDark);
         Accent = ContextCompat.getColor(context, R.color.colorAccent);
         CurrentMonth = ContextCompat.getColor(context, R.color.currentMonth);
@@ -55,12 +57,13 @@ public class ThemeStyle {
         ItemSelected = ContextCompat.getColor(context, R.color.itemSelected);
         WorkDay = ContextCompat.getColor(context, R.color.workDay);
         WorkNight = ContextCompat.getColor(context, R.color.workNight);
+        RestDay = ContextCompat.getColor(context, R.color.restDay);
     }
 
     /**
      * 根据用户设置载入主题颜色
      */
-    public static void LoadGlobalTheme(){
+    public static void LoadGlobalTheme() {
         GlobalSetting tmpSetting = GlobalSettingMng.getSetting();
         Primary = tmpSetting.getPrimaryColor();
     }

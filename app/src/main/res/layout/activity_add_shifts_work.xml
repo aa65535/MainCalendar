@@ -74,6 +74,13 @@
     <include android:id="@+id/work_day_layout_6" layout="@layout/shifts_work_item"/>
     <include android:id="@+id/work_day_layout_7" layout="@layout/shifts_work_item"/>
     <include android:id="@+id/work_day_layout_8" layout="@layout/shifts_work_item"/>
+    <include android:id="@+id/work_day_layout_9" layout="@layout/shifts_work_item"/>
+    <include android:id="@+id/work_day_layout_10" layout="@layout/shifts_work_item"/>
+    <include android:id="@+id/work_day_layout_11" layout="@layout/shifts_work_item"/>
+    <include android:id="@+id/work_day_layout_12" layout="@layout/shifts_work_item"/>
+    <include android:id="@+id/work_day_layout_13" layout="@layout/shifts_work_item"/>
+    <include android:id="@+id/work_day_layout_14" layout="@layout/shifts_work_item"/>
+    <include android:id="@+id/work_day_layout_15" layout="@layout/shifts_work_item"/>
 
     <RelativeLayout
         android:id="@+id/start_date_layout"

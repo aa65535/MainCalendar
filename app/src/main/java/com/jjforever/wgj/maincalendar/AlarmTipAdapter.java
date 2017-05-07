@@ -1,6 +1,7 @@
 package com.jjforever.wgj.maincalendar;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,6 @@ import android.widget.TextView;
 
 import com.jjforever.wgj.maincalendar.Model.AlarmRecord;
 import com.jjforever.wgj.maincalendar.monthui.ThemeStyle;
-import com.jjforever.wgj.maincalendar.util.Helper;
 
 import java.util.List;
 
@@ -70,10 +70,9 @@ class AlarmTipAdapter extends BaseAdapter {
         AlarmRecord tmpRecord = list.get(position);
         holder.date.setText(tmpRecord.toString());
         holder.title.setText(tmpRecord.getOnlyTitle());
-        if (Helper.isNullOrEmpty(tmpRecord.getContent())){
+        if (TextUtils.isEmpty(tmpRecord.getContent())) {
             holder.content.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             holder.content.setText(tmpRecord.getContent());
             holder.content.setVisibility(View.VISIBLE);
         }

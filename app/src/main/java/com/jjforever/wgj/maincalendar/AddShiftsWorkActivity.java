@@ -1,6 +1,7 @@
 package com.jjforever.wgj.maincalendar;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -12,7 +13,6 @@ import com.jjforever.wgj.maincalendar.Model.ShiftsWorkItem;
 import com.jjforever.wgj.maincalendar.Model.ShiftsWorkRecord;
 import com.jjforever.wgj.maincalendar.dialogpicker.picker.DialogPicker;
 import com.jjforever.wgj.maincalendar.toolbar.ToolBarActivity;
-import com.jjforever.wgj.maincalendar.util.Helper;
 import com.jjforever.wgj.maincalendar.util.LunarCalendar;
 import com.jjforever.wgj.maincalendar.wheelpicker.picker.DatePicker;
 import com.jjforever.wgj.maincalendar.wheelpicker.picker.NumberPicker;
@@ -24,6 +24,14 @@ import java.util.Calendar;
 
 public class AddShiftsWorkActivity extends ToolBarActivity {
 
+    // 设置项层ID集合
+    private final int[] mLayoutIds = new int[]{
+            R.id.work_day_layout_1, R.id.work_day_layout_2, R.id.work_day_layout_3,
+            R.id.work_day_layout_4, R.id.work_day_layout_5, R.id.work_day_layout_6,
+            R.id.work_day_layout_7, R.id.work_day_layout_8, R.id.work_day_layout_9,
+            R.id.work_day_layout_10, R.id.work_day_layout_11, R.id.work_day_layout_12,
+            R.id.work_day_layout_13, R.id.work_day_layout_14, R.id.work_day_layout_15
+    };
     // 标题栏控件
     private EditText mTitleEdit;
     // 周期设置项
@@ -32,10 +40,6 @@ public class AddShiftsWorkActivity extends ToolBarActivity {
     private TextView mStartDateView;
     // 轮班设置项集合
     private ArrayList<RelativeLayout> mItemLayouts;
-    // 设置项层ID集合
-    private final int[] mLayoutIds = new int[]{R.id.work_day_layout_1,R.id.work_day_layout_2,
-            R.id.work_day_layout_3,R.id.work_day_layout_4,R.id.work_day_layout_5,
-            R.id.work_day_layout_6,R.id.work_day_layout_7,R.id.work_day_layout_8};
     // 轮班类型
     private String[] mWorkTypes;
 
@@ -52,7 +56,7 @@ public class AddShiftsWorkActivity extends ToolBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_shifts_work);
         mRecord = getIntent().getParcelableExtra(AppConstants.MAIN_ACTIVITY_CLICK_DATE);
-        if (mRecord == null){
+        if (mRecord == null) {
             // 获取错误
             mSureQuit = true;
             finish();
@@ -71,25 +75,25 @@ public class AddShiftsWorkActivity extends ToolBarActivity {
     }
 
     // 设置界面
-    private void setView(){
+    private void setView() {
         mTitleEdit = (EditText) findViewById(R.id.text_shifts_title);
-        if (mTitleEdit != null && !Helper.isNullOrEmpty(mRecord.getTitle())) {
+        if (mTitleEdit != null && !TextUtils.isEmpty(mRecord.getTitle())) {
             mTitleEdit.setText(mRecord.getTitle());
         }
 
         // 设置项
         mItemLayouts = new ArrayList<>(mLayoutIds.length);
         final ArrayList<ShiftsWorkItem> tmpItems = mRecord.getItems();
-        for (int i = 0; i < mLayoutIds.length; i++){
+        for (int i = 0; i < mLayoutIds.length; i++) {
             RelativeLayout tmpLayout = (RelativeLayout) findViewById(mLayoutIds[i]);
-            if (tmpLayout == null){
+            if (tmpLayout == null) {
                 continue;
             }
             mItemLayouts.add(tmpLayout);
             TextView tmpDay = (TextView) tmpLayout.findViewById(R.id.work_day_text);
             tmpDay.setText(String.format(getString(R.string.work_day_no), i + 1));
             final TextView tmpTitle = (TextView) tmpLayout.findViewById(R.id.work_day_title);
-            if (i < tmpItems.size()){
+            if (i < tmpItems.size()) {
                 tmpTitle.setText(tmpItems.get(i).getTitle());
                 tmpDay.setText(String.format(getString(R.string.work_day_no), tmpItems.get(i).getDayNo()));
             }
@@ -124,14 +128,14 @@ public class AddShiftsWorkActivity extends ToolBarActivity {
                     final ShiftsWorkItem clickItem = tmpItems.get(clickIndex);
                     TimeSlotPicker tmpPicker = new TimeSlotPicker(AddShiftsWorkActivity.this);
                     tmpPicker.setTimeSlot(clickItem.getStartTime().Hour, clickItem.getStartTime().Minute,
-                                    clickItem.getEndTime().Hour, clickItem.getEndTime().Minute);
+                            clickItem.getEndTime().Hour, clickItem.getEndTime().Minute);
                     tmpPicker.setOnTimeSlotPickListener(new TimeSlotPicker.OnTimeSlotPickListener() {
                         @Override
                         public void onTimeSlotPicked(int startHour, int startMinute, int endHour, int endMinute) {
                             mIsChanged = true;
                             clickItem.setStartTime(startHour, startMinute);
                             clickItem.setEndTime(endHour, endMinute);
-                            if (clickItem.getIndex() > 0){
+                            if (clickItem.getIndex() > 0) {
                                 clickItem.setFlag(ShiftsWorkItem.UPDATE);
                             }
                             String tmpStr = clickItem.getStartTime().toString() + "~" + clickItem.getEndTime().toString();
@@ -141,7 +145,7 @@ public class AddShiftsWorkActivity extends ToolBarActivity {
                     tmpPicker.show();
                 }
             });
-            if (i < tmpItems.size()){
+            if (i < tmpItems.size()) {
                 ShiftsWorkItem tmpItem = tmpItems.get(i);
                 String tmpStr = tmpItem.getStartTime().toString() + "~" + tmpItem.getEndTime().toString();
                 timeSlot.setText(tmpStr);
@@ -151,30 +155,31 @@ public class AddShiftsWorkActivity extends ToolBarActivity {
         mPeriodView = (TextView) findViewById(R.id.work_period);
         setPeriod(mRecord.getPeriod());
         RelativeLayout periodLayout = (RelativeLayout) this.findViewById(R.id.period_layout);
-        if (periodLayout != null){
+        if (periodLayout != null) {
             periodLayout.setOnClickListener(this);
         }
 
         mStartDateView = (TextView) findViewById(R.id.work_start_date);
         mStartDateView.setText(mRecord.getStartDate().toShortString());
-//        mStartDateView.setOnClickListener(this);
+        //        mStartDateView.setOnClickListener(this);
         RelativeLayout startLayout = (RelativeLayout) this.findViewById(R.id.start_date_layout);
-        if (startLayout != null){
+        if (startLayout != null) {
             startLayout.setOnClickListener(this);
         }
     }
 
     /**
      * 设置周期页面
+     *
      * @param period 周期数
      */
-    private void setPeriod(int period){
+    private void setPeriod(int period) {
         mPeriodView.setText(String.valueOf(period));
         ArrayList<ShiftsWorkItem> tmpLst = mRecord.getItems();
-        for (int i = 0; i < mItemLayouts.size(); i++){
-            if (i < period){
+        for (int i = 0; i < mItemLayouts.size(); i++) {
+            if (i < period) {
                 mItemLayouts.get(i).setVisibility(View.VISIBLE);
-                if (tmpLst.size() <= i){
+                if (tmpLst.size() <= i) {
                     // 集合中没有进行添加
                     ShiftsWorkItem tmpItem = new ShiftsWorkItem();
                     tmpItem.setDayNo(i + 1);
@@ -183,8 +188,7 @@ public class AddShiftsWorkActivity extends ToolBarActivity {
                     tmpItem.setEndTime(23, 59);
                     tmpLst.add(tmpItem);
                 }
-            }
-            else{
+            } else {
                 mItemLayouts.get(i).setVisibility(View.GONE);
             }
         }
@@ -203,7 +207,7 @@ public class AddShiftsWorkActivity extends ToolBarActivity {
                     @Override
                     public void onOptionPicked(String option) {
                         int tmpPeriod = Integer.parseInt(option);
-                        if (tmpPeriod != mRecord.getPeriod()){
+                        if (tmpPeriod != mRecord.getPeriod()) {
                             mIsChanged = true;
                             mRecord.setPeriod(tmpPeriod);
                         }
@@ -242,9 +246,10 @@ public class AddShiftsWorkActivity extends ToolBarActivity {
 
     /**
      * 显示提示消息
+     *
      * @param msgId 提示消息字符串ID
      */
-    private void showToastMsg(int msgId){
+    private void showToastMsg(int msgId) {
         Toast.makeText(AddShiftsWorkActivity.this,
                 getResources().getString(msgId),
                 Toast.LENGTH_SHORT).show();
@@ -253,24 +258,22 @@ public class AddShiftsWorkActivity extends ToolBarActivity {
     /**
      * 整理每班记录项
      */
-    private void CleanUpItems(){
+    private void CleanUpItems() {
         ArrayList<ShiftsWorkItem> tmpLst = mRecord.getItems();
         for (int i = tmpLst.size() - 1; i >= 0; i--) {
             RelativeLayout tmpLayout = mItemLayouts.get(i);
             ShiftsWorkItem tmpItem = tmpLst.get(i);
-            if (tmpLayout.getVisibility() != View.VISIBLE){
+            if (tmpLayout.getVisibility() != View.VISIBLE) {
                 // 不显示则进行删除
-                if (tmpItem.getIndex() > 0){
+                if (tmpItem.getIndex() > 0) {
                     // 之前存在的项，需要数据库中进行删除
                     tmpItem.setFlag(ShiftsWorkItem.DELETE);
-                }
-                else{
+                } else {
                     // 不存在于数据库则直接删除
                     tmpLst.remove(i);
                 }
-            }
-            else{
-                if (tmpItem.getIndex() <= 0){
+            } else {
+                if (tmpItem.getIndex() <= 0) {
                     // 新建项，插入
                     tmpItem.setFlag(ShiftsWorkItem.INSERT);
                     if (mRecord.getIndex() > 0) {
@@ -282,14 +285,13 @@ public class AddShiftsWorkActivity extends ToolBarActivity {
     }
 
     @Override
-    public void onOKButtonClick()
-    {
+    public void onOKButtonClick() {
         String title = mTitleEdit.getText().toString();
-        if (Helper.isNullOrEmpty(title)){
+        if (TextUtils.isEmpty(title)) {
             new DialogPicker(this, getResources().getString(R.string.must_input_title)).show();
             return;
         }
-        if (ShiftsWorkRecordMng.isExist(title, mRecord.getIndex())){
+        if (ShiftsWorkRecordMng.isExist(title, mRecord.getIndex())) {
             // 该标题已存在
             showToastMsg(R.string.existed_record);
             return;
@@ -299,7 +301,7 @@ public class AddShiftsWorkActivity extends ToolBarActivity {
         mRecord.getStartDate().set(Calendar.SECOND, 0);
         mRecord.getStartDate().set(Calendar.MILLISECOND, 0);
 
-        if (mRecord.getIsNew()){
+        if (mRecord.getIsNew()) {
             // 新建记录
             mRecord.setTitle(title);
             CleanUpItems();
@@ -317,8 +319,7 @@ public class AddShiftsWorkActivity extends ToolBarActivity {
                 finish();
                 return;
             }
-        }
-        else{
+        } else {
             // 编辑记录
             mRecord.setTitle(title);
             CleanUpItems();
@@ -338,8 +339,8 @@ public class AddShiftsWorkActivity extends ToolBarActivity {
     }
 
     @Override
-    public void onDeleteButtonClick(){
-        if (mRecord.getIsNew()){
+    public void onDeleteButtonClick() {
+        if (mRecord.getIsNew()) {
             return;
         }
         // 删除当前记录
@@ -354,8 +355,7 @@ public class AddShiftsWorkActivity extends ToolBarActivity {
                         setResult(AppConstants.RESULT_DELETE, null);
                         mSureQuit = true;
                         finish();
-                    }
-                    else{
+                    } else {
                         showToastMsg(R.string.delete_fail);
                     }
                 }
@@ -365,15 +365,14 @@ public class AddShiftsWorkActivity extends ToolBarActivity {
     }
 
     @Override
-    public void finish()
-    {
-        if (mSureQuit){
+    public void finish() {
+        if (mSureQuit) {
             super.finish();
             return;
         }
 
         String title = mTitleEdit.getText().toString();
-        if (!title.equals(mRecord.getTitle())){
+        if (!title.equals(mRecord.getTitle())) {
             mIsChanged = true;
         }
 

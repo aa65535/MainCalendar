@@ -23,9 +23,9 @@ public class WeekAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<String> list;
     // 用来控制CheckBox的选中状况
-    private HashMap<Integer,Boolean> isSelected = new HashMap<>();
+    private HashMap<Integer, Boolean> isSelected = new HashMap<>();
 
-    public WeekAdapter(Context context){
+    public WeekAdapter(Context context) {
         this.context = context;
 
         this.list = new ArrayList<>();
@@ -38,7 +38,7 @@ public class WeekAdapter extends BaseAdapter {
         this.list.add(weekdays[Calendar.FRIDAY]);
         this.list.add(weekdays[Calendar.SATURDAY]);
 
-        for(int i = 0; i < list.size(); i++) {
+        for (int i = 0; i < list.size(); i++) {
             setIsSelected(i, false);
         }
     }
@@ -89,7 +89,7 @@ public class WeekAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public boolean getIsSelected(Integer position){
+    public boolean getIsSelected(Integer position) {
         return isSelected.get(position);
     }
 

@@ -9,16 +9,16 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.jjforever.wgj.maincalendar.common.util.DateUtils;
+import com.jjforever.wgj.maincalendar.util.LunarCalendar;
+import com.jjforever.wgj.maincalendar.wheelpicker.widget.WheelView;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-
-import com.jjforever.wgj.maincalendar.common.util.DateUtils;
-import com.jjforever.wgj.maincalendar.util.LunarCalendar;
-import com.jjforever.wgj.maincalendar.wheelpicker.widget.WheelView;
 
 /**
  * 日期选择器
@@ -49,24 +49,14 @@ public class DatePicker extends WheelPicker {
     private ArrayList<String> hours = new ArrayList<>();
     private ArrayList<String> minutes = new ArrayList<>();
     private OnDatePickListener onDatePickListener;
-//    private String yearLabel = "年", monthLabel = "月", dayLabel = "日";
-//    private String hourLabel = ":", minuteLabel = "";
+    //    private String yearLabel = "年", monthLabel = "月", dayLabel = "日";
+    //    private String hourLabel = ":", minuteLabel = "";
     private String selectedHour = "", selectedMinute = "";
     private int selectedYearIndex = 0, selectedMonthIndex = 0, selectedDayIndex = 0;
     private int mode = YEAR_MONTH_DAY;
 
     // 农历日期
     private LunarCalendar mLunar = new LunarCalendar();
-
-    /**
-     * 安卓开发应避免使用枚举类（enum），因为相比于静态常量enum会花费两倍以上的内存。
-     *
-     * @link http ://developer.android.com/training/articles/memory.html#Overhead
-     */
-    @IntDef(value = {YEAR_MONTH_DAY, YEAR_MONTH, MONTH_DAY, DATE_TIME})
-    @Retention(RetentionPolicy.SOURCE)
-    @interface Mode {
-    }
 
     /**
      * Instantiates a new Date picker.
@@ -107,19 +97,6 @@ public class DatePicker extends WheelPicker {
     }
 
     /**
-     * 设置年月日的单位字符
-     *
-     * @param yearLabel  the year label
-     * @param monthLabel the month label
-     * @param dayLabel   the day label
-     */
-//    public void setLabel(String yearLabel, String monthLabel, String dayLabel) {
-//        this.yearLabel = yearLabel;
-//        this.monthLabel = monthLabel;
-//        this.dayLabel = dayLabel;
-//    }
-
-    /**
      * 设置要显示的年代范围
      *
      * @param startYear the start year
@@ -131,6 +108,19 @@ public class DatePicker extends WheelPicker {
             years.add(String.valueOf(i));
         }
     }
+
+    /**
+     * 设置年月日的单位字符
+     *
+     * @param yearLabel  the year label
+     * @param monthLabel the month label
+     * @param dayLabel   the day label
+     */
+    //    public void setLabel(String yearLabel, String monthLabel, String dayLabel) {
+    //        this.yearLabel = yearLabel;
+    //        this.monthLabel = monthLabel;
+    //        this.dayLabel = dayLabel;
+    //    }
 
     private int findItemIndex(ArrayList<String> items, int item) {
         //折半查找有序元素的索引
@@ -165,14 +155,14 @@ public class DatePicker extends WheelPicker {
 
     /**
      * 设置选择项
-     * @param year 年
-     * @param month 月
-     * @param day 日
-     * @param hour 时
+     *
+     * @param year   年
+     * @param month  月
+     * @param day    日
+     * @param hour   时
      * @param minute 分
      */
-    public void setSelectedItem(int year, int month, int day, int hour, int minute)
-    {
+    public void setSelectedItem(int year, int month, int day, int hour, int minute) {
         setSelectedItem(year, month, day);
         selectedHour = DateUtils.fillZero(hour);
         selectedMinute = DateUtils.fillZero(minute);
@@ -206,8 +196,7 @@ public class DatePicker extends WheelPicker {
     /**
      * 更新农历日期
      */
-    private void updateLunar()
-    {
+    private void updateLunar() {
         mLunar.set(Calendar.YEAR, getSelectedYear());
         mLunar.set(Calendar.MONTH, getSelectedMonth());
         mLunar.set(Calendar.DAY_OF_MONTH, getSelectedDay());
@@ -216,13 +205,13 @@ public class DatePicker extends WheelPicker {
 
     /**
      * 创建一个滑动选择视图
+     *
      * @param layout 要添加的父层
-     * @param label 单位标签
+     * @param label  单位标签
      * @return 创建的滑动控件
      */
-    private WheelView createWheelView(LinearLayout layout, String label, boolean hide)
-    {
-        if (hide){
+    private WheelView createWheelView(LinearLayout layout, String label, boolean hide) {
+        if (hide) {
             return null;
         }
         WheelView tmpView = new WheelView(activity.getBaseContext());
@@ -242,10 +231,10 @@ public class DatePicker extends WheelPicker {
         }
         layout.addView(tmpTextView);
 
-//        if (hide){
-//            tmpView.setVisibility(View.GONE);
-//            tmpTextView.setVisibility(View.GONE);
-//        }
+        //        if (hide){
+        //            tmpView.setVisibility(View.GONE);
+        //            tmpTextView.setVisibility(View.GONE);
+        //        }
 
         return tmpView;
     }
@@ -263,7 +252,7 @@ public class DatePicker extends WheelPicker {
         WheelView hourView = createWheelView(layout, ":", mode != DATE_TIME);
         WheelView minuteView = createWheelView(layout, "", mode != DATE_TIME);
 
-        if (mode == DATE_TIME){
+        if (mode == DATE_TIME) {
             hourView.setItems(hours, selectedHour);
             minuteView.setItems(minutes, selectedMinute);
             hourView.setOnWheelViewListener(new WheelView.OnWheelViewListener() {
@@ -371,7 +360,7 @@ public class DatePicker extends WheelPicker {
                     break;
                 case DATE_TIME:
                     ((OnAllPickListener) onDatePickListener).onDatePicked(year, month, day,
-                                                        getSelectedHour(), getSelectedMinute());
+                            getSelectedHour(), getSelectedMinute());
                     break;
                 default:
                     ((OnYearMonthDayPickListener) onDatePickListener).onDatePicked(year, month, day);
@@ -406,6 +395,7 @@ public class DatePicker extends WheelPicker {
     public int getSelectedDay() {
         return stringToYearMonthDay(days.get(selectedDayIndex));
     }
+
     /**
      * Gets selected hour.
      *
@@ -422,6 +412,16 @@ public class DatePicker extends WheelPicker {
      */
     public int getSelectedMinute() {
         return stringToYearMonthDay(selectedMinute);
+    }
+
+    /**
+     * 安卓开发应避免使用枚举类（enum），因为相比于静态常量enum会花费两倍以上的内存。
+     *
+     * @link http ://developer.android.com/training/articles/memory.html#Overhead
+     */
+    @IntDef(value = {YEAR_MONTH_DAY, YEAR_MONTH, MONTH_DAY, DATE_TIME})
+    @Retention(RetentionPolicy.SOURCE)
+    @interface Mode {
     }
 
     /**
@@ -455,10 +455,10 @@ public class DatePicker extends WheelPicker {
         /**
          * On CellDate picked.
          *
-         * @param year  the year
-         * @param month the month
-         * @param day   the day
-         * @param hour 时
+         * @param year   the year
+         * @param month  the month
+         * @param day    the day
+         * @param hour   时
          * @param minute 分
          */
         void onDatePicked(int year, int month, int day, int hour, int minute);

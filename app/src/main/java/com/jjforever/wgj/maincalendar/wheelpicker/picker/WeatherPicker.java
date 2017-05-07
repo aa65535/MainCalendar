@@ -21,52 +21,6 @@ import java.util.ArrayList;
  */
 public class WeatherPicker extends WheelPicker {
 
-    // 选择的天气索引
-    private int mSelectedWeatherIndex = 0;
-    private ArrayList<String> weathers = new ArrayList<>();
-    // 天气选中触发事件
-    private OnWeatherPickListener onWeatherPickListener;
-    // 图片显示
-    private TextView mImageView;
-
-    /**
-     * 控件初始化
-     * @param activity 所在活动
-     */
-    public WeatherPicker(Activity activity){
-        super(activity);
-
-        for (int i = WeatherConstants.START_CODE; i <= WeatherConstants.END_CODE; i++){
-            weathers.add(WeatherIconUtil.getWeatherName(i));
-        }
-    }
-
-    /**
-     * 设置触发事件
-     * @param listener 监听事件
-     */
-    public void setOnWeatherPickListener(OnWeatherPickListener listener) {
-        this.onWeatherPickListener = listener;
-    }
-
-    /**
-     * 获取选中的天气代码
-     * @return 天气代码
-     */
-    public int getSelectedWeather()
-    {
-        return mSelectedWeatherIndex;
-    }
-
-    /**
-     * 设置默认显示天气
-     * @param code 天气代码
-     */
-    public void setSelectedItem(int code)
-    {
-        mSelectedWeatherIndex = code;
-    }
-
     // 获取图片
     Html.ImageGetter imageGetter = new Html.ImageGetter() {
         @Override
@@ -80,6 +34,53 @@ public class WeatherPicker extends WheelPicker {
             return drawable;
         }
     };
+    // 选择的天气索引
+    private int mSelectedWeatherIndex = 0;
+    private ArrayList<String> weathers = new ArrayList<>();
+    // 天气选中触发事件
+    private OnWeatherPickListener onWeatherPickListener;
+    // 图片显示
+    private TextView mImageView;
+
+    /**
+     * 控件初始化
+     *
+     * @param activity 所在活动
+     */
+    public WeatherPicker(Activity activity) {
+        super(activity);
+
+        for (int i = WeatherConstants.START_CODE; i <= WeatherConstants.END_CODE; i++) {
+            weathers.add(WeatherIconUtil.getWeatherName(i));
+        }
+    }
+
+    /**
+     * 设置触发事件
+     *
+     * @param listener 监听事件
+     */
+    public void setOnWeatherPickListener(OnWeatherPickListener listener) {
+        this.onWeatherPickListener = listener;
+    }
+
+    /**
+     * 获取选中的天气代码
+     *
+     * @return 天气代码
+     */
+    public int getSelectedWeather() {
+        return mSelectedWeatherIndex;
+    }
+
+    /**
+     * 设置默认显示天气
+     *
+     * @param code 天气代码
+     */
+    public void setSelectedItem(int code) {
+        mSelectedWeatherIndex = code;
+    }
 
     @Override
     @NonNull
@@ -123,6 +124,7 @@ public class WeatherPicker extends WheelPicker {
     public interface OnWeatherPickListener {
         /**
          * 天气选中触发事件
+         *
          * @param code 天气代码
          */
         void onWeatherPicked(int code);

@@ -1,18 +1,22 @@
 package com.jjforever.wgj.maincalendar;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
+import android.content.pm.PackageManager;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.support.v4.view.ViewPager;
-import android.view.View;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
@@ -30,25 +34,26 @@ import com.jjforever.wgj.maincalendar.Model.ICalendarRecord;
 import com.jjforever.wgj.maincalendar.Model.RecordType;
 import com.jjforever.wgj.maincalendar.Model.ShiftsWorkItem;
 import com.jjforever.wgj.maincalendar.Model.ShiftsWorkRecord;
-import com.jjforever.wgj.maincalendar.services.CalendarService;
 import com.jjforever.wgj.maincalendar.monthui.CalendarView;
+import com.jjforever.wgj.maincalendar.monthui.CalendarView.Cell;
 import com.jjforever.wgj.maincalendar.monthui.CalendarViewBuilder;
-import com.jjforever.wgj.maincalendar.monthui.CalendarViewPagerListener;
 import com.jjforever.wgj.maincalendar.monthui.CalendarViewPagerAdapter;
+import com.jjforever.wgj.maincalendar.monthui.CalendarViewPagerListener;
 import com.jjforever.wgj.maincalendar.monthui.ThemeStyle;
+import com.jjforever.wgj.maincalendar.services.CalendarService;
 import com.jjforever.wgj.maincalendar.util.DateUtil;
 import com.jjforever.wgj.maincalendar.util.Helper;
 import com.jjforever.wgj.maincalendar.util.LunarCalendar;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Locale;
-
 import com.jjforever.wgj.maincalendar.weather.util.WeatherConstants;
 import com.jjforever.wgj.maincalendar.weather.util.WeatherIconUtil;
 import com.jjforever.wgj.maincalendar.wheelpicker.picker.DatePicker;
 import com.jjforever.wgj.maincalendar.wheelpicker.picker.OptionPicker;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
@@ -106,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ViewGroup contentFrameLayout = (ViewGroup) findViewById(Window.ID_ANDROID_CONTENT);
         if (contentFrameLayout != null) {
             View parentView = contentFrameLayout.getChildAt(0);
-            if (parentView != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            if (parentView != null) {
                 parentView.setFitsSystemWindows(true);
             }
         }
@@ -122,10 +127,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AppConstants.loadGlobalService(this);
 
         // 开启后台服务
-//        if (!Helper.isServiceRunning(this, CalendarService.class.getName())) {
-//            AppConstants.DLog("Enter in service...");
-            startService(new Intent(this, CalendarService.class));
-//        }
+        //        if (!Helper.isServiceRunning(this, CalendarService.class.getName())) {
+        //            AppConstants.DLog("Enter in service...");
+        startService(new Intent(this, CalendarService.class));
+        //        }
 
         // 初始化闹钟记录
         AlarmRecordMng.initAlarmRecords();
@@ -175,12 +180,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 初始化页面控件
      */
-    private void setViewPager()
-    {
-        mRecordListTopMargin = (int)this.getResources().getDimension(R.dimen.schedule_top_margin);
+    private void setViewPager() {
+        mRecordListTopMargin = (int) this.getResources().getDimension(R.dimen.schedule_top_margin);
 
         mTodayLayout = (LinearLayout) this.findViewById(R.id.today_button_parent);
-        mEventLstLayout = (RelativeLayout)this.findViewById(R.id.eventLstLayout);
+        mEventLstLayout = (RelativeLayout) this.findViewById(R.id.eventLstLayout);
 
         TextView todayView = (TextView) this.findViewById(R.id.today_button);
         if (todayView != null) {
@@ -189,25 +193,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         mTodaySchedule = (TextView) this.findViewById(R.id.view_today_schedule);
         mListView = (ListView) findViewById(R.id.record_list);
-        if (mListView != null){
+        if (mListView != null) {
             mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (mRecordAdapter == null){
+                    if (mRecordAdapter == null) {
                         return;
                     }
 
                     Object selItem = mRecordAdapter.getItem(position);
-                    if (selItem == null){
+                    if (selItem == null) {
                         return;
                     }
 
-                    ICalendarRecord tmpRecord = (ICalendarRecord)selItem;
+                    ICalendarRecord tmpRecord = (ICalendarRecord) selItem;
                     if (tmpRecord.getType() == RecordType.DAILY_RECORD) {
                         startEditDaily((DailyRecord) tmpRecord);
-                    }
-                    else if (tmpRecord.getType() == RecordType.ALARM_RECORD){
-                        startEditAlarm((AlarmRecord)tmpRecord);
+                    } else if (tmpRecord.getType() == RecordType.ALARM_RECORD) {
+                        startEditAlarm((AlarmRecord) tmpRecord);
                     }
                 }
             });
@@ -236,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (mViewHeight != mContentPager.getHeight()) {
                         // 高度值有变化
                         mViewHeight = mContentPager.getHeight();
-                        int tmpHeight = mViewHeight - mCellHeight *  mListener.getCurrentView().getRowCount() - mRecordListTopMargin;
+                        int tmpHeight = mViewHeight - mCellHeight * mListener.getCurrentView().getRowCount() - mRecordListTopMargin;
                         mEventLstLayout.setMinimumHeight(tmpHeight);
                         mEventLstLayout.getLayoutParams().height = tmpHeight;
                     }
@@ -253,19 +256,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * 工具栏显示的当前日期
+     *
      * @param date 要显示的日期
      */
-    public void setShowDateViewText(LunarCalendar date){
+    public void setShowDateViewText(LunarCalendar date) {
         int year = date.get(Calendar.YEAR);
         int month = date.get(Calendar.MONTH);
         String lunarYear = date.getLunar(LunarCalendar.LUNAR_YEAR)
-                            + date.getLunar(LunarCalendar.LUNAR_ANIMAL)
-                            + this.getString(R.string.unit_year);
+                + date.getLunar(LunarCalendar.LUNAR_ANIMAL)
+                + this.getString(R.string.unit_year);
         String lunarMonth = date.getLunar(LunarCalendar.LUNAR_MONTH)
-                            + this.getString(R.string.unit_month);
+                + this.getString(R.string.unit_month);
         String solarDate = String.format(Locale.getDefault(), "%4d%s%d%s",
-                            year, this.getString(R.string.unit_year),
-                            month + 1, this.getString(R.string.unit_month));
+                year, this.getString(R.string.unit_year),
+                month + 1, this.getString(R.string.unit_month));
         // 设置主标题
         mToolbar.setTitle(lunarMonth);
         // 设置子标题
@@ -286,8 +290,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 DatePicker picker = new DatePicker(this);
                 Calendar date = mClickCell.CellDate;
                 picker.setSelectedItem(date.get(Calendar.YEAR),
-                                date.get(Calendar.MONTH),
-                                date.get(Calendar.DAY_OF_MONTH));
+                        date.get(Calendar.MONTH),
+                        date.get(Calendar.DAY_OF_MONTH));
                 picker.setOnDatePickListener(new DatePicker.OnYearMonthDayPickListener() {
                     @Override
                     public void onDatePicked(int year, int month, int day) {
@@ -306,25 +310,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onOptionPicked(String option) {
                         String[] options = getResources().getStringArray(R.array.record_type);
-                        if (option.equals(options[0])){
+                        if (option.equals(options[0])) {
                             // 闹钟
                             ICalendarRecord tmpRecord = mClickCell.getHoliday();
                             String tmpTitle = "";
-                            if (tmpRecord != null){
+                            if (tmpRecord != null) {
                                 tmpTitle = tmpRecord.getTitle();
                             }
                             startAddAlarm(mClickCell.CellDate, tmpTitle);
-                        }
-                        else if (option.equals(options[1])){
+                        } else if (option.equals(options[1])) {
                             // 日程
                             ICalendarRecord tmpRecord = mClickCell.getHoliday();
                             String tmpTitle = "";
-                            if (tmpRecord != null){
+                            if (tmpRecord != null) {
                                 tmpTitle = tmpRecord.getTitle();
                             }
                             startAddDaily(mClickCell.CellDate, tmpTitle, WeatherConstants.SUNNY);
-                        }
-                        else if (option.equals(options[2])){
+                        } else if (option.equals(options[2])) {
                             // 轮班
                             startAddWork(mClickCell.CellDate);
                         }
@@ -341,7 +343,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 打开系统设置页面
      */
-    private void startGlobalSetting(){
+    private void startGlobalSetting() {
         Intent intent = new Intent(this, GlobalSettingActivity.class);
         Bundle mBundle = new Bundle();
         intent.putExtras(mBundle);
@@ -351,10 +353,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * 开始添加闹钟
+     *
      * @param date 默认时间
      */
-    private void startAddAlarm(LunarCalendar date, String holiday)
-    {
+    private void startAddAlarm(LunarCalendar date, String holiday) {
         Intent intent = new Intent(this, AddAlarmActivity.class);
         Bundle bundle = new Bundle();
         Calendar tmpDate = Calendar.getInstance();
@@ -366,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tmpRecord.setMonth(date.get(Calendar.MONTH));
         tmpRecord.setDay(date.get(Calendar.DAY_OF_MONTH));
         tmpRecord.setTitle(holiday);
-        if (!Helper.isNullOrEmpty(holiday)) {
+        if (!TextUtils.isEmpty(holiday)) {
             tmpRecord.setContent(String.format(getString(R.string.today_is), holiday));
         }
         bundle.putParcelable(AppConstants.MAIN_ACTIVITY_CLICK_DATE, tmpRecord);
@@ -378,9 +380,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * 开始编辑闹钟记录
+     *
      * @param record 闹钟记录
      */
-    private void startEditAlarm(AlarmRecord record){
+    private void startEditAlarm(AlarmRecord record) {
         Intent intent = new Intent(this, AddAlarmActivity.class);
         Bundle mBundle = new Bundle();
         mBundle.putParcelable(AppConstants.MAIN_ACTIVITY_CLICK_DATE, record);
@@ -391,10 +394,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * 添加日程
+     *
      * @param date 默认时间
      */
-    private void startAddDaily(LunarCalendar date, String holiday, int weather)
-    {
+    private void startAddDaily(LunarCalendar date, String holiday, int weather) {
         Intent intent = new Intent(this, AddDailyActivity.class);
         Bundle mBundle = new Bundle();
         Calendar tmpDate = Calendar.getInstance();
@@ -405,11 +408,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tmpRecord.setRecordTime(date);
         tmpRecord.setWeather(weather);
         tmpRecord.setTitle(holiday);
-        if (!Helper.isNullOrEmpty(holiday)) {
+        if (!TextUtils.isEmpty(holiday)) {
             tmpRecord.setContent(String.format(getString(R.string.today_is), holiday));
         }
         mBundle.putParcelable(AppConstants.MAIN_ACTIVITY_CLICK_DATE, tmpRecord);
-//        mBundle.putSerializable(AppConstants.MAIN_ACTIVITY_CLICK_DATE, tmpRecord);
+        //        mBundle.putSerializable(AppConstants.MAIN_ACTIVITY_CLICK_DATE, tmpRecord);
         intent.putExtras(mBundle);
         startActivityForResult(intent, DailyRecordRequestCode);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
@@ -417,9 +420,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * 编辑日程
+     *
      * @param record 要编辑的记录
      */
-    private void startEditDaily(DailyRecord record){
+    private void startEditDaily(DailyRecord record) {
         Intent intent = new Intent(this, AddDailyActivity.class);
         Bundle mBundle = new Bundle();
         mBundle.putParcelable(AppConstants.MAIN_ACTIVITY_CLICK_DATE, record);
@@ -430,10 +434,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * 添加轮班记录
+     *
      * @param date 当前点击的日期
      */
-    private void startAddWork(LunarCalendar date)
-    {
+    private void startAddWork(LunarCalendar date) {
         Intent intent = new Intent(this, AddShiftsWorkActivity.class);
         Bundle mBundle = new Bundle();
         ShiftsWorkRecord tmpRecord = new ShiftsWorkRecord();
@@ -441,7 +445,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tmpRecord.setPeriod(4);
         String[] itemTypes = getResources().getStringArray(R.array.work_type);
         ArrayList<ShiftsWorkItem> tmpLst = new ArrayList<>();
-        for (int i = 0; i < 4; i++){
+        for (int i = 0; i < 4; i++) {
             ShiftsWorkItem tmpItem = new ShiftsWorkItem();
             tmpItem.setDayNo(i + 1);
             tmpItem.setTitle(i < itemTypes.length ? itemTypes[i] : itemTypes[itemTypes.length - 1]);
@@ -467,7 +471,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     || requestCode == ShiftsWorkRecordRequestCode) {
                 // 重载轮班记录
                 ShiftsWorkRecordMng.loadDisplayWork();
-                if (requestCode == GlobalSettingRequestCode){
+                if (requestCode == GlobalSettingRequestCode) {
                     ThemeStyle.LoadGlobalTheme();
                     mToolbar.setBackgroundColor(ThemeStyle.Primary);
                 }
@@ -498,37 +502,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_daily){
+        if (id == R.id.action_daily) {
             // 查看日常记录列表
             Intent intent = new Intent(this, DailyRecordList.class);
             startActivityForResult(intent, DailyRecordRequestCode);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             return true;
-        }
-        else if (id == R.id.action_alarm_clock){
+        } else if (id == R.id.action_alarm_clock) {
             // 查看闹钟记录列表
             Intent intent = new Intent(this, AlarmRecordList.class);
             startActivityForResult(intent, AlarmRecordRequestCode);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             return true;
-        }
-        else if (id == R.id.action_shifts_work){
+        } else if (id == R.id.action_shifts_work) {
             // 查看轮班记录列表
             Intent intent = new Intent(this, ShiftsWorkRecordList.class);
             startActivityForResult(intent, ShiftsWorkRecordRequestCode);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             return true;
-        }
-        else if (id == R.id.action_settings) {
+        } else if (id == R.id.action_settings) {
             startGlobalSetting();
             return true;
-        }
-        else if (id == R.id.action_about){
+        }/* else if (id == R.id.action_about) {
             Intent intent = new Intent(this, AboutActivity.class);
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -542,13 +542,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mCellHeight = cellSpace;
 
-        if (mOrientation == ORIENTATION_LANDSCAPE){
+        if (mOrientation == ORIENTATION_LANDSCAPE) {
             // 横向不理会
             return;
         }
 
         // mContentPager的高度
-        if (view != mListener.getCurrentView()){
+        if (view != mListener.getCurrentView()) {
             return;
         }
         int tmpCount = view.getRowCount();
@@ -563,10 +563,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void clickDate(CalendarView view, CalendarView.Cell cell) {
-        if (mListener == null || view != mListener.getCurrentView()){
+        if (mListener == null || view != mListener.getCurrentView()) {
             return;
         }
-        if (mClickCell == null || !DateUtil.isSameMonth(mClickCell.CellDate, cell.CellDate)){
+        if (mClickCell == null || !DateUtil.isSameMonth(mClickCell.CellDate, cell.CellDate)) {
             mCurMonthRecords = cell.ParentView.getCurMonthRecords();
             RecordDateComparator comparator = new RecordDateComparator();
             Collections.sort(mCurMonthRecords, comparator);
@@ -580,71 +580,62 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mTodayLayout.setVisibility(View.VISIBLE);
             }
         }
-
         setShowDateViewText(cell.CellDate);
         showClickCellRecords(mClickCell);
     }
 
     /**
      * 显示点击的日期当天的记录
+     *
      * @param cell 点击的单元格
      */
     private void showClickCellRecords(CalendarView.Cell cell) {
         if (cell.Records == null || cell.Records.isEmpty()) {
             mRecordAdapter = null;
-            if (mCurMonthRecords != null && !mCurMonthRecords.isEmpty()){
+            if (mCurMonthRecords != null && !mCurMonthRecords.isEmpty()) {
                 mRecordAdapter = new RecordAdapter(this, true, mCurMonthRecords);
-                mTodaySchedule.setText(String.format(getString(R.string.month_has_things), mCurMonthRecords.size()));
-            }
-            else{
-                mTodaySchedule.setText(getString(R.string.today_no_things));
             }
             mListView.setAdapter(mRecordAdapter);
+            setTodayScheduleText(cell, null);
             return;
         }
 
         ArrayList<ICalendarRecord> tmpLst = new ArrayList<>();
-        String holidayStr = "";
+        List<String> holidayStrList = new ArrayList<>();
         for (ICalendarRecord tmpRecord : cell.Records) {
             if (tmpRecord.getType() == RecordType.DAILY_RECORD
                     || tmpRecord.getType() == RecordType.ALARM_RECORD) {
                 tmpLst.add(tmpRecord);
-            }
-            else if (tmpRecord.getType() == RecordType.SOLAR_HOLIDAY
-                    || tmpRecord.getType() == RecordType.LUNAR_HOLIDAY){
-                holidayStr += tmpRecord.getTitle() + " | ";
+            } else if (tmpRecord.getType() == RecordType.SOLAR_HOLIDAY
+                    || tmpRecord.getType() == RecordType.LUNAR_HOLIDAY) {
+                holidayStrList.add(tmpRecord.getTitle());
             }
         }
-        if (!Helper.isNullOrEmpty(holidayStr)) {
-            holidayStr = holidayStr.substring(0, holidayStr.length() - 3);
-            holidayStr = String.format(getString(R.string.today_is), holidayStr);
-        }
+        setTodayScheduleText(cell, holidayStrList);
         if (tmpLst.isEmpty()) {
-            mTodaySchedule.setText(getString(R.string.today_no_things));
             mRecordAdapter = null;
-            if (mCurMonthRecords != null && !mCurMonthRecords.isEmpty()){
+            if (mCurMonthRecords != null && !mCurMonthRecords.isEmpty()) {
                 mRecordAdapter = new RecordAdapter(this, true, mCurMonthRecords);
-                mTodaySchedule.setText(String.format(getString(R.string.month_has_things), mCurMonthRecords.size()));
             }
             mListView.setAdapter(mRecordAdapter);
 
-            if (!Helper.isNullOrEmpty(holidayStr)){
-                mTodaySchedule.setText(holidayStr);
-            }
             return;
         }
 
-        if (!Helper.isNullOrEmpty(holidayStr)){
-            mTodaySchedule.setText(holidayStr);
-        }
-        else {
-            mTodaySchedule.setText(String.format(getString(R.string.today_has_things), tmpLst.size()));
-        }
         RecordDateComparator comparator = new RecordDateComparator();
         Collections.sort(tmpLst, comparator);
         // ListView绑定适配器
         mRecordAdapter = new RecordAdapter(this, false, tmpLst);
         mListView.setAdapter(mRecordAdapter);
+    }
+
+    private void setTodayScheduleText(Cell cell, List<String> list) {
+        String str = cell.CellDate.getLunarDateString();
+        if (list != null && !list.isEmpty()) {
+            str += " ";
+            str += TextUtils.join(" | ", list);
+        }
+        mTodaySchedule.setText(str);
     }
 
     @Override
@@ -657,12 +648,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 更新当前日历页面
      */
-    public void updateCalendarView(){
+    public void updateCalendarView() {
         mListener.updateView();
     }
 
     /**
      * 日期更新后当前日期更改
+     *
      * @param intent 广播内容
      */
     public void onReceiveDate(Intent intent) {
@@ -674,6 +666,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (DateUtil.isCurrentMonth(mClickCell.CellDate)) {
                 updateCalendarView();
             }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getPersimmions();
+    }
+
+    @TargetApi(VERSION_CODES.M)
+    private void getPersimmions() {
+        ArrayList<String> permissions = new ArrayList<>();
+        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (permissions.size() > 0) {
+            requestPermissions(permissions.toArray(new String[permissions.size()]), 127);
         }
     }
 }

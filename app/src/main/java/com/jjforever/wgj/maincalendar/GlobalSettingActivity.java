@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -61,67 +62,72 @@ public class GlobalSettingActivity extends ToolBarActivity {
 
         mThemeView = (TextView) findViewById(R.id.theme_color);
         mThemeView.setBackgroundColor(mParams.getPrimaryColor());
-//        mThemeView.setOnClickListener(this);
+        //        mThemeView.setOnClickListener(this);
         RelativeLayout colorLayout = (RelativeLayout) findViewById(R.id.color_layout);
-        if (colorLayout != null){
+        if (colorLayout != null) {
             colorLayout.setOnClickListener(this);
         }
 
         mWorkView = (TextView) findViewById(R.id.display_work);
         Long workIndex = mParams.getShiftsWorkIndex();
-        if (workIndex > 0){
+        if (workIndex > 0) {
             String tmpTitle = getWorkTitle(workIndex);
-            if (!Helper.isNullOrEmpty(tmpTitle)){
+            if (!TextUtils.isEmpty(tmpTitle)) {
                 mWorkView.setText(tmpTitle);
             }
         }
-//        mWorkView.setOnClickListener(this);
+        //        mWorkView.setOnClickListener(this);
         RelativeLayout workLayout = (RelativeLayout) findViewById(R.id.work_layout);
-        if (workLayout != null){
+        if (workLayout != null) {
             workLayout.setOnClickListener(this);
         }
 
         mRingView = (TextView) findViewById(R.id.ring_file);
-        if (!Helper.isNullOrEmpty(mParams.getRingPath())){
+        if (!TextUtils.isEmpty(mParams.getRingPath())) {
             mRingView.setText(Helper.getFileName(mParams.getRingPath()));
         }
-//        mRingView.setOnClickListener(this);
+        //        mRingView.setOnClickListener(this);
         RelativeLayout ringLayout = (RelativeLayout) findViewById(R.id.ring_layout);
-        if (ringLayout != null){
+        if (ringLayout != null) {
             ringLayout.setOnClickListener(this);
         }
 
         mRingTimeView = (TextView) findViewById(R.id.ring_time);
         mRingTimeView.setText(String.valueOf(mParams.getRingSeconds()));
-//        mRingTimeView.setOnClickListener(this);
+        //        mRingTimeView.setOnClickListener(this);
         RelativeLayout timeLayout = (RelativeLayout) findViewById(R.id.time_layout);
-        if (timeLayout != null){
+        if (timeLayout != null) {
             timeLayout.setOnClickListener(this);
         }
 
         mNotificationButton = (SwitchButton) findViewById(R.id.notification_switch_button);
         mNotificationButton.setChecked(mParams.getIsNotification());
         RelativeLayout notiLayout = (RelativeLayout) findViewById(R.id.notification_layout);
-        if (notiLayout != null){
+        if (notiLayout != null) {
             notiLayout.setOnClickListener(this);
         }
 
         mDebugButton = (SwitchButton) findViewById(R.id.debug_switch_button);
         mDebugButton.setChecked(mParams.getIsRecordLog());
         RelativeLayout debugLayout = (RelativeLayout) findViewById(R.id.debug_layout);
-        if (debugLayout != null){
-            debugLayout.setOnClickListener(this);
+        if (debugLayout != null) {
+            if (!AppConstants.DEBUG) {
+                debugLayout.setVisibility(View.GONE);
+            } else {
+                debugLayout.setOnClickListener(this);
+            }
         }
     }
 
     /**
      * 获取轮班记录标题
+     *
      * @param index 索引
      * @return 如果有返回标题
      */
-    private String getWorkTitle(long index){
-        for (KeyValue tmpValue : mShiftsWorks){
-            if (tmpValue.Index == index){
+    private String getWorkTitle(long index) {
+        for (KeyValue tmpValue : mShiftsWorks) {
+            if (tmpValue.Index == index) {
                 return tmpValue.Title;
             }
         }
@@ -139,7 +145,7 @@ public class GlobalSettingActivity extends ToolBarActivity {
                 colorPicker.setOnColorPickListener(new ColorPicker.OnColorPickListener() {
                     @Override
                     public void onColorPicked(@ColorInt int pickedColor) {
-                        if (pickedColor != mParams.getPrimaryColor()){
+                        if (pickedColor != mParams.getPrimaryColor()) {
                             mIsChanged = true;
                             mParams.setPrimaryColor(pickedColor);
                             mThemeView.setBackgroundColor(pickedColor);
@@ -154,14 +160,14 @@ public class GlobalSettingActivity extends ToolBarActivity {
                 final long[] indexBuf = new long[mShiftsWorks.size()];
                 final String[] strBuf = new String[mShiftsWorks.size()];
                 int i = 0;
-                for (KeyValue tmpValue : mShiftsWorks){
+                for (KeyValue tmpValue : mShiftsWorks) {
                     indexBuf[i] = tmpValue.Index;
                     strBuf[i] = tmpValue.Title;
                     i++;
                 }
                 OptionPicker workPicker = new OptionPicker(GlobalSettingActivity.this, strBuf);
-                for (i = 0; i < strBuf.length; i++){
-                    if (mParams.getShiftsWorkIndex() == indexBuf[i]){
+                for (i = 0; i < strBuf.length; i++) {
+                    if (mParams.getShiftsWorkIndex() == indexBuf[i]) {
                         break;
                     }
                 }
@@ -171,7 +177,7 @@ public class GlobalSettingActivity extends ToolBarActivity {
                     @Override
                     public void onOptionPicked(int index) {
                         long tmpIndex = indexBuf[index];
-                        if (tmpIndex != mParams.getShiftsWorkIndex()){
+                        if (tmpIndex != mParams.getShiftsWorkIndex()) {
                             mIsChanged = true;
                             mParams.setShiftsWorkIndex(tmpIndex);
                             mWorkView.setText(strBuf[index]);
@@ -187,19 +193,17 @@ public class GlobalSettingActivity extends ToolBarActivity {
                     if (this.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
                             PackageManager.PERMISSION_GRANTED) {
                         filePicker = new FilePicker(this, FilePicker.FILE);
-                    }
-                    else{
+                    } else {
                         filePicker = new FilePicker(this, FilePicker.FILE);
                     }
-                }
-                else{
+                } else {
                     filePicker = new FilePicker(this, FilePicker.FILE);
                 }
 
                 filePicker.setShowHideDir(false);
                 filePicker.setShowUpDir(true);
                 filePicker.setRingExtensions();
-                if (!Helper.isNullOrEmpty(mParams.getRingPath())) {
+                if (!TextUtils.isEmpty(mParams.getRingPath())) {
                     filePicker.setRootPath(Helper.getFilePath(mParams.getRingPath()));
                 }
                 filePicker.setOnFilePickListener(new FilePicker.OnFilePickListener() {
@@ -208,10 +212,9 @@ public class GlobalSettingActivity extends ToolBarActivity {
                         if (!mParams.getRingPath().equals(currentPath)) {
                             mIsChanged = true;
                             mParams.setRingPath(currentPath);
-                            if (Helper.isNullOrEmpty(currentPath)){
+                            if (TextUtils.isEmpty(currentPath)) {
                                 mRingView.setText(getString(R.string.has_no));
-                            }
-                            else {
+                            } else {
                                 mRingView.setText(Helper.getFileName(currentPath));
                             }
                         }
@@ -228,7 +231,7 @@ public class GlobalSettingActivity extends ToolBarActivity {
                     @Override
                     public void onOptionPicked(String option) {
                         int tmpValue = Integer.parseInt(option);
-                        if (tmpValue != mParams.getRingSeconds()){
+                        if (tmpValue != mParams.getRingSeconds()) {
                             mIsChanged = true;
                             mParams.setRingSeconds(tmpValue);
                             mRingTimeView.setText(option);
@@ -253,17 +256,17 @@ public class GlobalSettingActivity extends ToolBarActivity {
 
     /**
      * 显示提示消息
+     *
      * @param msgId 提示消息字符串ID
      */
-    private void showToastMsg(int msgId){
+    private void showToastMsg(int msgId) {
         Toast.makeText(GlobalSettingActivity.this,
                 getResources().getString(msgId),
                 Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onOKButtonClick()
-    {
+    public void onOKButtonClick() {
         mParams.setIsNotification(mNotificationButton.isChecked());
         mParams.setIsRecordLog(mDebugButton.isChecked());
         GlobalSettingMng.setSetting(mParams);
@@ -276,9 +279,8 @@ public class GlobalSettingActivity extends ToolBarActivity {
     }
 
     @Override
-    public void finish()
-    {
-        if (mSureQuit){
+    public void finish() {
+        if (mSureQuit) {
             super.finish();
             return;
         }
