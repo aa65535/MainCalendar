@@ -49,6 +49,7 @@ import com.jjforever.wgj.maincalendar.weather.util.WeatherIconUtil;
 import com.jjforever.wgj.maincalendar.wheelpicker.picker.DatePicker;
 import com.jjforever.wgj.maincalendar.wheelpicker.picker.OptionPicker;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -68,7 +69,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int ShiftsWorkRecordRequestCode = 2;
     // 系统设置页面的需求编号
     private static final int GlobalSettingRequestCode = 3;
-    private static final String ViewPagerIndex = "viewPagerIndex";
+    private static final String CurrIndex = "currIndex";
+    private static final String ShowDate = "showDate";
 
     // 当前布局方向 1:竖屏   2:横屏
     private int mOrientation;
@@ -103,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<ICalendarRecord> mCurMonthRecords;
     // 记录适配器
     private RecordAdapter mRecordAdapter;
-    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -218,17 +219,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
         }
 
-        mViewPager = (ViewPager) this.findViewById(R.id.viewpager);
+        ViewPager viewPager = (ViewPager) this.findViewById(R.id.viewpager);
         CalendarView[] views = CalendarViewBuilder.createMassCalendarViews(this, AppConstants.LOAD_CALENDAR_VIEW_COUNT, this);
         CalendarViewPagerAdapter viewPagerAdapter = new CalendarViewPagerAdapter(views);
         mListener = new CalendarViewPagerListener(viewPagerAdapter);
-        if (mViewPager != null) {
-            mViewPager.setAdapter(viewPagerAdapter);
-            mViewPager.addOnPageChangeListener(mListener);
-            if (savedInstanceState != null)
-                mViewPager.setCurrentItem(savedInstanceState.getInt(ViewPagerIndex, CalendarViewPagerListener.DEFAULT_INDEX));
-            else
-                mViewPager.setCurrentItem(CalendarViewPagerListener.DEFAULT_INDEX);
+        if (viewPager != null) {
+            viewPager.setAdapter(viewPagerAdapter);
+            viewPager.addOnPageChangeListener(mListener);
+            if (savedInstanceState != null) {
+                viewPager.setCurrentItem(savedInstanceState.getInt(CurrIndex, CalendarViewPagerListener.DEFAULT_INDEX));
+                Serializable date = savedInstanceState.getSerializable(ShowDate);
+                if (date != null) {
+                    mListener.locateToDay((LunarCalendar) date);
+                }
+            } else {
+                viewPager.setCurrentItem(CalendarViewPagerListener.DEFAULT_INDEX);
+            }
         }
 
         mContentPager = this.findViewById(R.id.contentPager);
@@ -256,7 +262,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(ViewPagerIndex, mViewPager.getCurrentItem());
+        outState.putInt(CurrIndex, mListener.getCurrIndex());
+        outState.putSerializable(ShowDate, mListener.getCurrentView().getClickCell().CellDate);
     }
 
     @Override

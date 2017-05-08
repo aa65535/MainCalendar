@@ -2,6 +2,7 @@ package com.jjforever.wgj.maincalendar.monthui;
 
 import android.support.v4.view.ViewPager;
 
+import com.jjforever.wgj.maincalendar.AppConstants;
 import com.jjforever.wgj.maincalendar.monthui.CalendarView.Cell;
 import com.jjforever.wgj.maincalendar.util.LunarCalendar;
 
@@ -59,6 +60,7 @@ public class CalendarViewPagerListener implements ViewPager.OnPageChangeListener
      * @param date 指定日期
      */
     public void locateToDay(LunarCalendar date) {
+        AppConstants.WLog("locateToDay: " + date.toString());
         getCurrentView().locateToDay(date);
         onPageSelected(mCurrIndex);
     }
@@ -108,6 +110,10 @@ public class CalendarViewPagerListener implements ViewPager.OnPageChangeListener
      */
     public CalendarView getCurrentView() {
         return mShowViews[mCurrIndex % mShowViews.length];
+    }
+
+    public int getCurrIndex() {
+        return mCurrIndex;
     }
 
     @Override
