@@ -10,11 +10,11 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
-import android.widget.CheckBox;
 
 import com.jjforever.wgj.maincalendar.R;
 
@@ -22,7 +22,7 @@ import com.jjforever.wgj.maincalendar.R;
  * Created by Wgj on 2016/8/20.
  * 重写开关按钮
  */
-public class SwitchButton extends CheckBox {
+public class SwitchButton extends AppCompatCheckBox {
     private final static float VELOCITY = 350;
     private final static float EXTENDED_OFFSET_Y = 15;
     private final int MAX_ALPHA = 255;

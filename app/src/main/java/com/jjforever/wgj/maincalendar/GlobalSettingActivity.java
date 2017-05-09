@@ -112,7 +112,8 @@ public class GlobalSettingActivity extends ToolBarActivity {
         RelativeLayout debugLayout = (RelativeLayout) findViewById(R.id.debug_layout);
         if (debugLayout != null) {
             if (!AppConstants.DEBUG) {
-                debugLayout.setVisibility(View.GONE);
+                mDebugButton.setChecked(false);
+                mDebugButton.setEnabled(false);
             } else {
                 debugLayout.setOnClickListener(this);
             }

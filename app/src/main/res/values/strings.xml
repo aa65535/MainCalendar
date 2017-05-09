@@ -21,12 +21,6 @@
     <string name="today_has_things">当日共有<xliff:g id="day_count">%1d</xliff:g>条日程记录</string>
     <string name="month_has_things">当月共有<xliff:g id="month_count">%1d</xliff:g>条日程记录</string>
 
-    <string-array name="record_type">
-        <item>闹钟</item>
-        <item>日常记录</item>
-        <item>轮班记录</item>
-    </string-array>
-
     <!-- 公用的字符串 -->
     <string name="dialog_title">日历提醒</string>
     <string name="record_content">请输入记录内容&#8230;</string>

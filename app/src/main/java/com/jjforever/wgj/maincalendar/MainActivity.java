@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -26,6 +25,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.jjforever.wgj.maincalendar.BLL.AlarmRecordMng;
 import com.jjforever.wgj.maincalendar.BLL.ShiftsWorkRecordMng;
 import com.jjforever.wgj.maincalendar.Model.AlarmRecord;
@@ -47,7 +47,6 @@ import com.jjforever.wgj.maincalendar.util.LunarCalendar;
 import com.jjforever.wgj.maincalendar.weather.util.WeatherConstants;
 import com.jjforever.wgj.maincalendar.weather.util.WeatherIconUtil;
 import com.jjforever.wgj.maincalendar.wheelpicker.picker.DatePicker;
-import com.jjforever.wgj.maincalendar.wheelpicker.picker.OptionPicker;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -105,6 +104,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<ICalendarRecord> mCurMonthRecords;
     // 记录适配器
     private RecordAdapter mRecordAdapter;
+    
+    private FloatingActionsMenu mFloatingActionsMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,10 +161,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        if (fab != null) {
-            fab.setOnClickListener(this);
-        }
+        mFloatingActionsMenu = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
+        findViewById(R.id.action_add_work).setOnClickListener(this);
+        findViewById(R.id.action_add_daily).setOnClickListener(this);
+        findViewById(R.id.action_add_alarm).setOnClickListener(this);
 
         // 获取页面资源
         setViewPager(savedInstanceState);
@@ -319,38 +320,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 picker.show();
                 break;
 
-            case R.id.fab:
-                OptionPicker tmpOption = new OptionPicker(this,
-                        getResources().getStringArray(R.array.record_type));
-                tmpOption.setSelectedIndex(1);
-                tmpOption.setTextSize(16);
-                tmpOption.setOnOptionPickListener(new OptionPicker.OnOptionPickListener() {
-                    @Override
-                    public void onOptionPicked(String option) {
-                        String[] options = getResources().getStringArray(R.array.record_type);
-                        if (option.equals(options[0])) {
-                            // 闹钟
-                            ICalendarRecord tmpRecord = mClickCell.getHoliday();
-                            String tmpTitle = "";
-                            if (tmpRecord != null) {
-                                tmpTitle = tmpRecord.getTitle();
-                            }
-                            startAddAlarm(mClickCell.CellDate, tmpTitle);
-                        } else if (option.equals(options[1])) {
-                            // 日程
-                            ICalendarRecord tmpRecord = mClickCell.getHoliday();
-                            String tmpTitle = "";
-                            if (tmpRecord != null) {
-                                tmpTitle = tmpRecord.getTitle();
-                            }
-                            startAddDaily(mClickCell.CellDate, tmpTitle, WeatherConstants.SUNNY);
-                        } else if (option.equals(options[2])) {
-                            // 轮班
-                            startAddWork(mClickCell.CellDate);
-                        }
-                    }
-                });
-                tmpOption.show();
+            case R.id.action_add_alarm:
+                // 闹钟
+                mFloatingActionsMenu.collapse();
+                ICalendarRecord holiday = mClickCell.getHoliday();
+                String title = "";
+                if (holiday != null) {
+                    title = holiday.getTitle();
+                }
+                startAddAlarm(mClickCell.CellDate, title);
+                break;
+
+            case R.id.action_add_daily:
+                // 日程
+                mFloatingActionsMenu.collapse();
+                ICalendarRecord holiday1 = mClickCell.getHoliday();
+                String title1 = "";
+                if (holiday1 != null) {
+                    title1 = holiday1.getTitle();
+                }
+                startAddDaily(mClickCell.CellDate, title1, WeatherConstants.SUNNY);
+                break;
+
+            case R.id.action_add_work:
+                // 轮班
+                mFloatingActionsMenu.collapse();
+                startAddWork(mClickCell.CellDate);
                 break;
 
             default:

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:fillViewport="true"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:fitsSystemWindows="true">
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:fitsSystemWindows="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,7 +31,7 @@
                 android:gravity="start|center_vertical"
                 android:lineSpacingExtra="3dip"
                 android:textColor="@color/optionValue"
-                android:textSize="@dimen/option_value_size" />
+                android:textSize="@dimen/option_value_size"/>
 
             <ImageView
                 android:id="@+id/record_weather"
@@ -43,7 +43,7 @@
                 android:gravity="center_vertical"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_sunny_big"
-                android:textSize="@dimen/option_value_size" />
+                android:textSize="@dimen/option_value_size"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -60,7 +60,7 @@
                 android:gravity="center"
                 android:text="@string/notice_in_calendar"
                 android:textColor="@color/optionLabel"
-                android:textSize="@dimen/normal_font_size" />
+                android:textSize="@dimen/normal_font_size"/>
 
             <com.jjforever.wgj.maincalendar.monthui.SwitchButton
                 android:id="@+id/switch_notice"
@@ -69,7 +69,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_gravity="end|center"
-                android:layout_marginEnd="@dimen/option_layer_horizontal_margin" />
+                android:layout_marginEnd="@dimen/option_layer_horizontal_margin"/>
         </RelativeLayout>
 
         <EditText
@@ -82,12 +82,12 @@
             android:background="@drawable/edit_text_bg"
             android:gravity="center_vertical"
             android:hint="@string/record_title"
-            android:singleLine="true"
             android:maxLength="20"
             android:paddingEnd="@dimen/edit_text_padding"
             android:paddingStart="@dimen/edit_text_padding"
+            android:singleLine="true"
             android:textColor="@color/colorEditText"
-            android:textSize="@dimen/normal_font_size" />
+            android:textSize="@dimen/normal_font_size"/>
 
         <EditText
             android:id="@+id/text_record_content"
@@ -102,9 +102,9 @@
             android:hint="@string/record_content"
             android:lineSpacingExtra="8dip"
             android:maxLength="512"
-            android:padding="@dimen/edit_text_padding"
             android:minLines="7"
+            android:padding="@dimen/edit_text_padding"
             android:textColor="@color/colorEditText"
-            android:textSize="@dimen/normal_font_size" />
+            android:textSize="@dimen/normal_font_size"/>
     </LinearLayout>
 </ScrollView>
