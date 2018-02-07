@@ -169,6 +169,7 @@ public class LunarCalendar extends GregorianCalendar {
      * @param d    农历日
      * @param leap 是否为闰月
      */
+    @SuppressLint("WrongConstant")
     public LunarCalendar(int y, int m, int d, boolean leap) {
         this.set(LUNAR_YEAR, y);
         this.set(LUNAR_MONTH, leap ? -m : m);
@@ -568,6 +569,7 @@ public class LunarCalendar extends GregorianCalendar {
      *
      * @return 20XX-XX-XX样式的日期描述
      */
+    @SuppressLint("WrongConstant")
     public String getSimpleLunarDateString() {
         return String.format(Locale.getDefault(), "%d-%s-%d",
                 get(LUNAR_YEAR), get(LUNAR_MONTH) > 0 ? ""
@@ -582,13 +584,12 @@ public class LunarCalendar extends GregorianCalendar {
      * @return 天干地支日期描述
      */
     public String getLunarDateString() {
-        return new StringBuilder().append(getLunar(LUNAR_YEAR))
-                .append(getLunar(LUNAR_ANIMAL))
-                .append("年")
-                .append(getLunar(LUNAR_MONTH))
-                .append("月")
-                .append(getLunar(LUNAR_DATE))
-                .toString();
+        return getLunar(LUNAR_YEAR) +
+                getLunar(LUNAR_ANIMAL) +
+                "年" +
+                getLunar(LUNAR_MONTH) +
+                "月" +
+                getLunar(LUNAR_DATE);
     }
 
     /**
@@ -597,12 +598,11 @@ public class LunarCalendar extends GregorianCalendar {
      * @return 农历年月信息
      */
     public String getLunarMonthString() {
-        return new StringBuilder().append(getLunar(LUNAR_YEAR))
-                .append(getLunar(LUNAR_ANIMAL))
-                .append("年")
-                .append(getLunar(LUNAR_MONTH))
-                .append("月")
-                .toString();
+        return getLunar(LUNAR_YEAR) +
+                getLunar(LUNAR_ANIMAL) +
+                "年" +
+                getLunar(LUNAR_MONTH) +
+                "月";
     }
 
     /**
@@ -611,11 +611,11 @@ public class LunarCalendar extends GregorianCalendar {
      * @return 公历及农历详细字符串
      */
     public String toString() {
-        return new StringBuilder().append(toShortString())
-                .append(" | ")
-                .append(getLunar(DAY_OF_WEEK))
-                .append(" | [农历]")
-                .append(getLunarDateString()).toString();
+        return toShortString() +
+                " | " +
+                getLunar(DAY_OF_WEEK) +
+                " | [农历]" +
+                getLunarDateString();
     }
 
     /**

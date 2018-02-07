@@ -61,15 +61,15 @@ import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, CalendarView.CallBack {
 
     // 日常记录编辑页面的需求编号
-    private static final int DailyRecordRequestCode = 0;
+    private static final int DAILY_RECORD_REQUEST_CODE = 0;
     // 闹钟记录编辑页面的需求编号
-    private static final int AlarmRecordRequestCode = 1;
+    private static final int ALARM_RECORD_REQUEST_CODE = 1;
     // 轮班记录编辑页面的需求编号
-    private static final int ShiftsWorkRecordRequestCode = 2;
+    private static final int SHIFTS_WORK_RECORD_REQUEST_CODE = 2;
     // 系统设置页面的需求编号
-    private static final int GlobalSettingRequestCode = 3;
-    private static final String CurrIndex = "currIndex";
-    private static final String ShowDate = "showDate";
+    private static final int GLOBAL_SETTING_REQUEST_CODE = 3;
+    private static final String CURR_INDEX = "currIndex";
+    private static final String SHOW_DATE = "showDate";
 
     // 当前布局方向 1:竖屏   2:横屏
     private int mOrientation;
@@ -228,8 +228,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             viewPager.setAdapter(viewPagerAdapter);
             viewPager.addOnPageChangeListener(mListener);
             if (savedInstanceState != null) {
-                viewPager.setCurrentItem(savedInstanceState.getInt(CurrIndex, CalendarViewPagerListener.DEFAULT_INDEX));
-                Serializable date = savedInstanceState.getSerializable(ShowDate);
+                viewPager.setCurrentItem(savedInstanceState.getInt(CURR_INDEX, CalendarViewPagerListener.DEFAULT_INDEX));
+                Serializable date = savedInstanceState.getSerializable(SHOW_DATE);
                 if (date != null) {
                     mListener.locateToDay((LunarCalendar) date);
                 }
@@ -263,8 +263,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(CurrIndex, mListener.getCurrIndex());
-        outState.putSerializable(ShowDate, mListener.getCurrentView().getClickCell().CellDate);
+        outState.putInt(CURR_INDEX, mListener.getCurrIndex());
+        outState.putSerializable(SHOW_DATE, mListener.getCurrentView().getClickCell().CellDate);
     }
 
     @Override
@@ -360,7 +360,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent(this, GlobalSettingActivity.class);
         Bundle mBundle = new Bundle();
         intent.putExtras(mBundle);
-        startActivityForResult(intent, GlobalSettingRequestCode);
+        startActivityForResult(intent, GLOBAL_SETTING_REQUEST_CODE);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
@@ -387,7 +387,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bundle.putParcelable(AppConstants.MAIN_ACTIVITY_CLICK_DATE, tmpRecord);
 
         intent.putExtras(bundle);
-        startActivityForResult(intent, AlarmRecordRequestCode);
+        startActivityForResult(intent, ALARM_RECORD_REQUEST_CODE);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
@@ -401,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Bundle mBundle = new Bundle();
         mBundle.putParcelable(AppConstants.MAIN_ACTIVITY_CLICK_DATE, record);
         intent.putExtras(mBundle);
-        startActivityForResult(intent, AlarmRecordRequestCode);
+        startActivityForResult(intent, ALARM_RECORD_REQUEST_CODE);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
@@ -427,7 +427,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mBundle.putParcelable(AppConstants.MAIN_ACTIVITY_CLICK_DATE, tmpRecord);
         //        mBundle.putSerializable(AppConstants.MAIN_ACTIVITY_CLICK_DATE, tmpRecord);
         intent.putExtras(mBundle);
-        startActivityForResult(intent, DailyRecordRequestCode);
+        startActivityForResult(intent, DAILY_RECORD_REQUEST_CODE);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
@@ -441,7 +441,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Bundle mBundle = new Bundle();
         mBundle.putParcelable(AppConstants.MAIN_ACTIVITY_CLICK_DATE, record);
         intent.putExtras(mBundle);
-        startActivityForResult(intent, DailyRecordRequestCode);
+        startActivityForResult(intent, DAILY_RECORD_REQUEST_CODE);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
@@ -476,15 +476,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == DailyRecordRequestCode
-                || requestCode == AlarmRecordRequestCode
-                || requestCode == GlobalSettingRequestCode
-                || requestCode == ShiftsWorkRecordRequestCode) {
-            if (requestCode == GlobalSettingRequestCode
-                    || requestCode == ShiftsWorkRecordRequestCode) {
+        if (requestCode == DAILY_RECORD_REQUEST_CODE
+                || requestCode == ALARM_RECORD_REQUEST_CODE
+                || requestCode == GLOBAL_SETTING_REQUEST_CODE
+                || requestCode == SHIFTS_WORK_RECORD_REQUEST_CODE) {
+            if (requestCode == GLOBAL_SETTING_REQUEST_CODE
+                    || requestCode == SHIFTS_WORK_RECORD_REQUEST_CODE) {
                 // 重载轮班记录
                 ShiftsWorkRecordMng.loadDisplayWork();
-                if (requestCode == GlobalSettingRequestCode) {
+                if (requestCode == GLOBAL_SETTING_REQUEST_CODE) {
                     ThemeStyle.LoadGlobalTheme();
                     mToolbar.setBackgroundColor(ThemeStyle.Primary);
                 }
@@ -518,19 +518,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (id == R.id.action_daily) {
             // 查看日常记录列表
             Intent intent = new Intent(this, DailyRecordList.class);
-            startActivityForResult(intent, DailyRecordRequestCode);
+            startActivityForResult(intent, DAILY_RECORD_REQUEST_CODE);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             return true;
         } else if (id == R.id.action_alarm_clock) {
             // 查看闹钟记录列表
             Intent intent = new Intent(this, AlarmRecordList.class);
-            startActivityForResult(intent, AlarmRecordRequestCode);
+            startActivityForResult(intent, ALARM_RECORD_REQUEST_CODE);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             return true;
         } else if (id == R.id.action_shifts_work) {
             // 查看轮班记录列表
             Intent intent = new Intent(this, ShiftsWorkRecordList.class);
-            startActivityForResult(intent, ShiftsWorkRecordRequestCode);
+            startActivityForResult(intent, SHIFTS_WORK_RECORD_REQUEST_CODE);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             return true;
         } else if (id == R.id.action_settings) {

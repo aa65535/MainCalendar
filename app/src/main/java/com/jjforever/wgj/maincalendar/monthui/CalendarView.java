@@ -1,5 +1,6 @@
 package com.jjforever.wgj.maincalendar.monthui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -416,20 +417,12 @@ public class CalendarView extends View {
     private void rightSlide() {
         // 新页面清除点击的单元格
         mClickCell = null;
-        int curYear = mShowDate.get(Calendar.YEAR);
-        int curMonth = mShowDate.get(Calendar.MONTH);
-        if (curMonth == 11) {
-            mShowDate.set(Calendar.MONTH, 0);
-            mShowDate.set(Calendar.YEAR, curYear + 1);
-        } else {
-            mShowDate.set(Calendar.MONTH, curMonth + 1);
-        }
+        mShowDate.add(Calendar.MONTH, 1);
         if (DateUtil.isCurrentMonth(mShowDate)) {
             mShowDate.set(Calendar.DAY_OF_MONTH, DateUtil.getCurrentMonthDay());
         } else {
             mShowDate.set(Calendar.DAY_OF_MONTH, 1);
         }
-        //update();
         AsyncUpdate();
     }
 
@@ -439,20 +432,12 @@ public class CalendarView extends View {
     private void leftSlide() {
         // 新页面清除点击的单元格
         mClickCell = null;
-        int curYear = mShowDate.get(Calendar.YEAR);
-        int curMonth = mShowDate.get(Calendar.MONTH);
-        if (curMonth == 0) {
-            mShowDate.set(Calendar.MONTH, 11);
-            mShowDate.set(Calendar.YEAR, curYear - 1);
-        } else {
-            mShowDate.set(Calendar.MONTH, curMonth - 1);
-        }
+        mShowDate.add(Calendar.MONTH, -1);
         if (DateUtil.isCurrentMonth(mShowDate)) {
             mShowDate.set(Calendar.DAY_OF_MONTH, DateUtil.getCurrentMonthDay());
         } else {
             mShowDate.set(Calendar.DAY_OF_MONTH, 1);
         }
-        //update();
         AsyncUpdate();
     }
 
@@ -468,6 +453,7 @@ public class CalendarView extends View {
         mCallBack.onMeasureCellHeight(this, mCellSpace);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {

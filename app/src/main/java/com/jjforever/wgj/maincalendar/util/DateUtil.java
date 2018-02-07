@@ -1,5 +1,7 @@
 package com.jjforever.wgj.maincalendar.util;
 
+import android.annotation.SuppressLint;
+
 import java.util.Calendar;
 
 /**
@@ -212,6 +214,7 @@ public final class DateUtil {
      * @param date 要检查的日期
      * @return 农历或者节假日信息
      */
+    @SuppressLint("WrongConstant")
     public static String getSubCalendar(LunarCalendar date) {
         // 检查节气
         int dayIndex = date.get(LunarCalendar.DAY_OF_MONTH);
