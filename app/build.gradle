@@ -1,23 +1,22 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+    compileSdkVersion 27
     defaultConfig {
         applicationId "com.jjforever.wgj.maincalendar"
         minSdkVersion 19
-        targetSdkVersion 25
-        versionName '1.3'
+        targetSdkVersion 27
         versionCode 5
+        versionName '1.3'
     }
     signingConfigs {
         config {
-            def Properties localProps = new Properties()
+            Properties localProps = new Properties()
             localProps.load(new FileInputStream(file('..\\local.properties')))
-            storeFile file(localProps.getProperty("storeFile", STORE_FILE))
-            keyAlias localProps.getProperty("keyAlias", KEY_ALIAS)
-            storePassword localProps.getProperty("storePassword", STORE_PASSWORD)
-            keyPassword localProps.getProperty("keyPassword", KEY_PASSWORD)
+            storeFile file(localProps.getProperty('storeFile'))
+            keyAlias localProps.getProperty('keyAlias')
+            storePassword localProps.getProperty('storePassword')
+            keyPassword localProps.getProperty('keyPassword')
         }
     }
     buildTypes {
@@ -30,34 +29,21 @@ android {
             zipAlignEnabled true
         }
         release {
+            debuggable false
+            jniDebuggable false
             minifyEnabled true
-            //是否移除无用的资源
-            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            zipAlignEnabled true
+            renderscriptDebuggable false
+            shrinkResources true
             signingConfig signingConfigs.config
+            zipAlignEnabled true
         }
-    }
-    //打包后应用名称
-    applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            def outputFile = output.outputFile
-            def fileName
-            if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                if (variant.buildType.name.equals('release')) {
-                    fileName = "MainCalendar ${defaultConfig.versionName}.apk"
-                    output.outputFile = new File(outputFile.parent, fileName)
-                }
-            }
-        }
-    }
-    productFlavors {
     }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.android.support:support-v4:25.3.1'
-    compile 'com.getbase:floatingactionbutton:1.10.1'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:design:27.0.2'
+    implementation 'com.android.support:support-v4:27.0.2'
+    implementation 'com.getbase:floatingactionbutton:1.10.1'
 }
